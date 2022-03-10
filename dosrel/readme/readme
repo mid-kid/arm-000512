@@ -1,0 +1,290 @@
+This is the README file for the Cygnus DOS tools.
+
+Contents:
+
+o	How to install.
+
+o	PATHS and Environment variables.
+
+o	Speeding it up.
+
+o	Using the online documentation.
+
+o	Hints and solutions to common problems.
+
+o	How to get the source.
+
+o	Technical info about the release.
+
+
+
+How to install
+**************
+
+Run the "INSTALL.EXE" program on the first floppy disk.  It only copies
+the files onto your hard disk.  It doesn't modify your CONFIG.SYS or
+AUTOEXEC.BAT.
+
+If the floppy drive on your system is called "b" then type:
+
+b:install
+
+and answer the questions.
+
+PATHS and Environment variables.
+********************************
+
+
+for AUTOEXEC.BAT:
+
+Assuming that you've installed the tools into C:\CYGNUS, you'll need
+to set the following names in your AUTOEXEC.BAT file.
+
+set GCC_EXEC_PREFIX=C:\CYGNUS\LIB\
+set C_INCLUDE_PATH=C:\CYGNUS\INCLUDE
+set CPLUS_INCLUDE_PATH=C:\CYGNUS\INCLUDE\CXX;C:\CYGNUS\INCLUDE
+set INFOPATH=C:\CYGNUS\INFO
+set GO32=EMU C:\CYGNUS\BIN\EMU387
+
+and put C:\CYGNUS\BIN into your path.
+
+The trailing '\' for GCC_EXEC_PREFIX is required.
+The SETENV.BAT script in C:\CYGNUS sets these names up.
+
+If you don't have SHARE running, add it to your AUTOEXEC.BAT too.  
+
+for CONFIG.SYS
+
+If you get an "OUT OF ENVIRONMENT SPACE" error when you try and set
+these variables you'll have to increase the size of the environment
+used by COMMAND.COM.
+
+Eg, to set the space to 2000 characters, add this to your CONFIG.SYS
+
+SHELL=C:\DOS\COMMAND.COM /E:2000
+
+To use the info browser you have to have the ANSI.SYS driver loaded, so you may
+have to edit CONFIG.SYS to include:
+
+DEVICE=C:\DOS\ANSI.SYS
+
+
+
+You'll also need to beef up the setting of the FILES variable in your CONFIG.SYS
+file.  You'll need at least 20 handles, so add a line like this:
+
+FILES=20
+
+
+Speeding it up.
+***************
+
+These tools like a lot of memory and a diskcache.  If you're not using
+SMARTDRV you should start now.
+
+You may want to think about putting the binaries into onto a RAM drive.
+
+
+
+Using online documentation
+**************************
+
+   You can browse through the online documentation using either GNU
+Emacs, or the documentation browser program `info' included in the
+Developer's Kit.  Online, the manuals are organized into "nodes", which
+correspond to the chapters and sections of a printed book.  You can
+follow them in sequence, if you wish, just like in the printed
+book--but there are also other choices.  The documents have menus that
+let you go quickly to the node that has the information you need.
+`info' has ""hot"" references; if one section refers to another, you
+can tell `info' to take you immediately to that other section--and you
+can get back again easily to take up your reading where you left off.
+Naturally, you can also search for particular words or phrases.
+
+   The best way to get started with the online documentation system is
+to run the browser `info'.  After the Developer's Kit is installed on
+your system, you can get into `info' by just typing its name--no
+options or arguments are necessary--at your shell's prompt (shown as
+`eg%' here):
+
+     eg% info
+
+   (You may need to check that `info' is in your shell path after you
+install the Developer's Kit. If you have problems running `info', please
+contact your systems administrator.)
+
+   To learn how to use Info, type the command `h'.  It will bring you
+to a programmed instruction sequence. If at any time you are ready to
+stop using info, type `q'. To get help, type `CTL-h'
+
+
+
+Hints and Common Problems
+*************************
+(much of this taken from the go32 faq)
+
+Q: When I run "gcc e:\proj\prog.c" it says "undefined escape sequence \p"?
+A: Gcc is a *unix* compiler - you must use *unix* slashes (e:/proj/prog.c).
+   Environment variables (like GCCINC) may, however, use either, as they
+   are converted.
+
+Q: I type "GCC PROG.C" and ld complains about PROG.C not being an object.
+Q: I type "gcc prog.cxx" to compile a C++ program, and ld complains.
+A: Gcc is *not* case insensitive like DOS is, and it uses the file's
+   extension to determine how to compile a file.  Valid extensions are:
+     .cc = C++ source (passed through cpp)
+     .c = C source that must be passed through cpp first
+     .i = raw C source (no cpp pass)
+     .S = assembler that must be passed through cpp first
+     .s = raw assembler source (no cpp pass)
+   any other file is passed to the linker
+
+Q: When I use GCC in a batch file it things that C files are C++.
+A: GCC is case sensitive.  Sometimes filenames are expanded in DOS
+   to uppercase. For example:
+	FOR %i in ( *.c ) do gcc %i
+   with a file called a.C in the directory will call
+	gcc A.C
+   which will treat A as a C++ file.  The solution is to use 
+   a make file or the -x c switch to gcc.
+
+Q: Gcc doesn't recognize // as a comment in my C programs.
+A: That's because // isn't a comment in C.  If you want to compile C++,
+   then write C++ programs.  Gcc is really two compilers in one, not
+   one compiler that compiles both C and C++.  That's why you get
+   cc1 and cc1plus.
+
+Q: Can I use gcc on my 512K machine?
+A: Yes, but the disk better have at least 4Mb of free space for paging.
+   Go32 will use all available extended memory (up to 128M) and up to
+   128M of disk space, for a grand total of 256M of virtual memory for
+   your application.
+
+Q: Why do my compiles are running VERY SLOW, even though I use a ramdisk
+   for swap and a disk cache?
+A: Gcc requires at least 1Mb of virtual memory to run, usually close to 1.5M.
+   If there isn't this much real memory available, it starts paging to disk.
+   It's good to leave about 1M of extended (not expanded) memory available
+   for go32 to run programs with.  When it needs to page a lot, you spend
+   most of your time paging and little time actually running.  Note that
+   if you are running with a VCPI server, like QEMM or 386MAX, then go32
+   will use *expanded* memory for it's physical memory needs, not
+   extended.
+
+Q: Go32 complains that the CPU must be in V86 mode to run.
+A: When the CPU is in V86 mode, the V86 manager must provide VCPI
+   services for go32.  Since VCPI is an extension to EMS, disabling EMS
+   will disable VCPI, and prevent go32 from running.  For some EMS
+   managers, this means that you can't use the "noems" switch.
+
+Q: Why can't I keep QEMM in auto/off mode?
+A: When QEMM is in auto/off mode and there isn't anything in the system that
+   is using any of QEMM's features, the CPU remains in "real" mode.  Go32
+   knows this, and will try to use XMS to access the extended memory.
+   Unfortunately, XMS is a feature that causes QEMM to turn on, and go32
+   doesn't know this and when it tries to switch into protected mode,
+   QEMM traps it and gives a protection violation warning.  Since this
+   always requires a system reboot to fix, go32 checks to see if enabling
+   XMS caused the cpu to switch into v86 mode (meaning QEMM just turned
+   on) and gracefully exits.  All you have to do to work around this is
+   force QEMM to be on all the time so that go32 will know how to work
+   with it properly.
+
+Q: How do globbing and response files work?
+A: A response file is a file that contains stuff that goes on the command
+   line, but is too big for DOS.  The name of the file is given as "@file"
+   to any COFF program, and go32 reads the file for command line
+   information.  It uses single and double quotes to group parameters, and
+   backslashes to escape quotes, spaces, tabs, newlines, and backslashes.
+   Parameters containing wildcards are expanded if they can be, else they
+   are unmodified.  Surrounding a parameter in single quotes will prevent
+   wildcards from being expanded.  This is similar to unix.  Note that
+   backslashes are not special if they are not in front of a quote,
+   whitespace, or backslash.
+
+Q: How do I pass a command line of greater that 127 characters to any
+   of the tools ?
+A: DOS doesn't allow long command lines.  But you can put your command
+   line into a file (called a response file) and reference the file on
+   the command line with a @ sign.  Then the tool will read the file
+   as if you typed it onto the command line.
+	
+   For example
+
+	gcc @foo
+
+   Reads the contents of the file "foo" as if they were on the command
+   line.
+
+
+Q: Can I use the tools on a 286 ?
+A: No.
+
+
+Q: Can I run it under Windows ?
+A: Yes. Infact it works a bit faster under windows.
+
+
+Q: Why do some birds fly south for the winter ?
+A: It's too far to walk.
+
+
+Q: Why does a tool say "Error: not enough memory to run go32!".
+A: This often happens when trying to run make, but it can happen
+   to any of the tools if you don't have enoght memory.  Make calls
+   gcc, gcc calls cc1 or the assembler etc etc.  Each invocation uses
+   more memory.  You can avoid this problem by not using make, or
+   stripping out unused TSRs from your AUTOEXEC.BAT or CONFIG.SYS file so that
+   there is more spare memory in the bottom 640K.  Try running MEMMAKER.
+
+   If you use MEM you can see how much conventional memory you have 
+   free.  You'll need around 500K to allow make to run properly.
+
+Q:  How do I get the online help ?
+A:  If your INFOPATH is set correctly then all you need do is type:
+    
+    info
+
+    If you don't have INFOPATH set, you'll get an error like this:
+
+	info.exe: dir: file not found
+
+    then you'll need to specify the path on the command line like this:
+
+    info -d c:/cygnus/info
+
+
+How to get the source
+*********************
+
+Because floppies are so small this release has the source on tape.  If
+you want the source in a different form you can get it for a fee from
+Cygnus.  By scrounging around the net you could get all the source
+without having to pay us.  Most of the tools on this disk are covered
+by the GNU GENERAL PUBLIC LICENCE (see the file COPYING).
+
+The C library source is not GPLed.  You can do with that what you want.
+
+
+
+Technical info about the release
+********************************
+
+The binaries in this release were compiled on a Unix workstation with
+gcc generating 32bit 386 code.  The code is run with a DOS extender
+"go32.exe" which uses the flat memory model available in the 386.
+You can get the source to this too.
+
+The files are stored on the floppies using the standard Unix
+'compress' format.  You can install files without using the install
+program by just copying them into the right place on your hard drive
+and using running a decompress program - such as gzip.  Note that the
+files are stored on the floppy using their full name, and not the
+marked as compressed by using the .Z naming convention.
+
+For example; to uncompress cc1 from the floppy directly:
+
+  gzip -dc  b:\bin\cc1.exe >c:\foo\bin\cc1.exe
+
+
+

@@ -1,0 +1,154 @@
+<sect1 id="using-textbinary"><title>Text and Binary modes</title>
+
+<sect2> <title>The Issue</title>
+
+<para>On a UNIX system, when an application reads from a file it gets
+exactly what's in the file on disk and the converse is true for writing.
+The situation is different in the DOS/Windows world where a file can
+be opened in one of two modes, binary or text.  In the binary mode the
+system behaves exactly as in UNIX.  However in text mode there are
+major differences:</para>
+<para>a) On writing in text mode, a NL (\n, ^J) is transformed into the 
+sequence CR (\r, ^M) NL.</para>
+<para>b) On reading in text mode, a CR followed by an NL is deleted and a ^Z
+character signals the end of file.</para>
+
+<para>This can wreak havoc with the seek/fseek calls since the number
+of bytes actually in the file may differ from that seen by the
+application.</para>
+
+<para>The mode can be specified explicitly as explained in the
+Programming section below.  In an ideal DOS/Windows world, all
+programs using lines as records (such as bash, make, sed ...) would
+open files (and change the mode of their standard input and output) as
+text.  All other programs (such as cat, cmp, tr ...) would use
+binary mode.  In practice with Cygwin, programs that deal explicitly
+with object files specify binary mode (this is the case of
+<command>od</command>, which is helpful to diagnose CR problems).
+Most other programs (such as cat, cmp, tr) use the default text
+mode.</para>
+
+</sect2>
+
+<sect2><title>The default Cygwin behavior</title>
+
+<para>The Cygwin system gives us some flexibility in deciding how files 
+are to be opened when the mode is not specified explicitly:</para>
+
+<para>a) If the file appears to reside on a file system that is mounted
+(i.e. if its pathname starts with a directory displayed by
+<command>mount</command>), then the default is specified by the mount
+flag. If the file is a symbolic link, the mode of the target file system
+applies.</para>
+
+<para>b) If the file appears to reside on a file system that is not mounted
+(as can happen when the path contains a drive letter), the default mode is
+text, except if the CYGWIN environment variable contains
+<literal>binmode</literal>.</para>
+
+<para> Note: in b20.1 only, <literal>binmode</literal> in CYGWIN takes
+precedence over rule a) and causes files residing on text mounted partitions
+to open by default as binary. </para>
+
+<para>c) Pipes and non-file devices are always opened in binary mode.</para>
+
+<para>d) When a Cygwin program is launched by a shell, its standard input,
+output and error are in binary mode if the CYGWIN variable contains
+<literal>tty</literal>, else in text mode, except if they are piped or
+redirected.  When redirecting, the Cygwin shells uses rules (a-c). For these
+shells the relevant value of CYGWIN is that at the time the shell was
+launched and not that at the time the program is executed.  Non-Cygwin
+shells always pipe and redirect with Binary mode. With non-Cygwin shells the
+commands <command> cat filename | program </command> and <command> program
+&lt filename </command> are not equivalent when
+<filename>filename</filename> is on a text-mounted partition. </para>
+</sect2>
+
+<sect2><title>Example</title>
+<para>To illustrate the various rules, we provide a script to delete CRs
+from files by using the <command>tr</command> program, which can only write
+to standard output.</para>
+<screen>
+#!/bin/sh
+# Remove \r from the files given as arguments
+for file in "$@"
+do
+  CYGWIN=binmode sh -c "tr -d \\\"\\\r\\\" < '$file' > c:tmpfile.tmp"
+  if [ "$?" = "0" ]
+  then
+    rm "$file"
+    mv c:tmpfile.tmp "$file"
+  fi
+done
+</screen>
+
+<para>This works irrespective of the mount because rule b) applies for the
+path <filename>c:tmpfile.tmp</filename>.  According to rule d) CYGWIN must
+be set before invoking the shell.  These precautions are necessary because
+<command>tr</command> does not set its standard output to binary mode. It
+would thus reintroduce \r when writing to a file on a text mounted
+partition. The desired behavior can also be obtained by using <command>tr -d
+\r</command> in a .bat file. </para>
+
+</sect2>
+
+<sect2><title>Mounting binary or text?</title>
+
+<para>UNIX programs that have been written for maximum portibility
+will know the difference between text and binary files and act
+appropriately under Cygwin.  For those programs, the text mode default
+is a good choice.  Programs included in official Cygnus distributions
+should work well in the default mode. </para>
+
+<para>Text mode makes it much easier to mix files between Cygwin and
+Windows programs, since Windows programs will usually use the CRLF
+format.  Unfortunately you may still have some problems with text
+mode.  First, some of the utilities included with Cygwin do not yet
+specify binary mode when they should, e.g. <command>cat</command> will
+not work with binary files (input will stop at ^Z, CRs will be
+introduced in the output). Second, you will introduce CRs in text
+files you write, which can cause problems when moving them back to a
+UNIX system. </para>
+
+<para>If you are mounting a remote file system from a UNIX machine,
+or moving files back and forth to a UNIX machine, you may want to
+access them in binary mode as the text files found there will normally
+be NL format anyway, and you would want any files put there by Cygwin
+programs to be stored in a format that the UNIX machine will
+understand.  Be sure to remove CRs from all Makefiles and
+shell scripts and make sure that you only edit the files with
+DOS/Windows editors that can cope with binary mode files.
+</para>
+
+<para>Note that you can decide this on a disk by disk basis (for
+example, mounting local disks in text mode and network disks in binary
+mode).  You can also partition a disk, for example by mounting
+<filename>c:</filename> in text mode, and <filename>c:\home</filename>
+in binary mode.</para>
+
+</sect2>
+
+<sect2><title>Programming</title>
+
+<para>In the <literal>open()</literal> function call, binary mode can be
+specified with <literal>O_BINARY</literal> and text mode with
+<literal>O_TEXT</literal>. These symbols are defined in
+<filename>fcntl.h</filename>.</para>
+
+<para>In the <literal>fopen()</literal> function call, binary mode can be
+specified by adding a <literal>b</literal> to the mode string. There is no
+direct way to specify text mode.</para>
+
+<para>The mode of a file can be changed by the call
+<literal>setmode(fd,mode)</literal> where <literal>fd</literal> is a file
+descriptor (an integer) and <literal>mode</literal> is
+<literal>O_BINARY</literal> or <literal>O_TEXT</literal>. The function
+returns <literal>O_BINARY</literal> or <literal>O_TEXT</literal> depending
+on the mode before the call, and <literal>EOF</literal> on error.</para>
+
+<para>The mode of a file can be checked with <literal>stat()</literal> and
+<literal>fstat()</literal> (see <filename>sys/stat.h</filename>).</para>
+
+</sect2>
+
+</sect1>

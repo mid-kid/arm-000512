@@ -1,0 +1,91 @@
+# Cygnus-style Makefile for overlay.
+
+SHELL = /bin/sh
+
+CC = $(CC_FOR_TARGET)
+
+CC_FOR_TARGET = ` \
+  if [ -f $${rootme}/../../gcc/xgcc ] ; then \
+    if [ -f $${rootme}/../../newlib/Makefile ]; then \
+      echo $${rootme}/../../gcc/xgcc -B$${rootme}/../../gcc/ -idirafter $${rootme}/../../newlib/targ-include -idirafter $${rootsrc}/../../newlib/libc/include -nostdinc -L$${rootme}/../../newlib -B$${rootme}/../../newlib/; \
+    else \
+      echo $${rootme}/../../gcc/xgcc -B$${rootme}/../../gcc/; \
+    fi; \
+  else \
+    if [ "$(host_canonical)" = "$(target_canonical)" ] ; then \
+      echo gcc; \
+    else \
+      t='$(program_transform_name)'; echo gcc | sed -e '' $$t; \
+    fi; \
+  fi`
+
+CXX = $(CXX_FOR_TARGET)
+
+CXX_FOR_TARGET = ` \
+  if [ -f $${rootme}/../gcc/xgcc ] ; then \
+    if [ -f $${rootme}/../newlib/Makefile ]; then \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/ -idirafter $${rootme}/../newlib/targ-include -idirafter $${rootsrc}/../newlib/libc/include -nostdinc -L$${rootme}/../newlib -B$${rootme}/../newlib/; \
+    else \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/; \
+    fi; \
+  else \
+    if [ "$(host_canonical)" = "$(target_canonical)" ] ; then \
+      echo gcc; \
+    else \
+      t='$(program_transform_name)'; echo gcc | sed -e '' $$t; \
+    fi; \
+  fi`
+
+# Directory containing source files.  Don't clean up the spacing,
+# this exact string is matched for by the "configure" script.
+srcdir = .
+
+# CFLAGS is specifically reserved for setting from the command line
+# when running make.  I.E.  "make USER_CFLAGS=-Wmissing-prototypes".
+CFLAGS = -g
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments
+
+TEXT_LDSCRIPT = $(srcdir)/$(target_cpu)text.ld
+DATA_LDSCRIPT = $(srcdir)/$(target_cpu)data.ld
+
+ALL_CFLAGS = $(CFLAGS)
+
+# Prevent Sun make from putting in the machine type.  Setting
+# TARGET_ARCH to nothing works for SunOS 3, 4.0, but not for 4.1.
+.c.o:
+	${CC} -c ${ALL_CFLAGS} $<
+
+# Build the dhrystone program.
+
+all:	ovlytext ovlydata
+
+ovlytext: maintext.o foo.o bar.o baz.o grbx.o ovlymgr.o
+	$(CC) $(ALL_CFLAGS) foo.o bar.o baz.o grbx.o ovlymgr.o \
+		maintext.o -o ovlytext -T$(TEXT_LDSCRIPT)
+
+ovlydata: maindata.o foo.o bar.o baz.o grbx.o ovlymgr.o
+	$(CC) $(ALL_CFLAGS) foo.o bar.o baz.o grbx.o ovlymgr.o \
+		maindata.o -o ovlydata -T$(DATA_LDSCRIPT)
+
+ovlymgr.o:	ovlymgr.c
+	$(CC) -c $(srcdir)/ovlymgr.c
+
+info:
+
+install:
+
+install-info:
+
+mostlyclean:
+
+clean:		mostlyclean
+	rm -f *.o ovlytext ovlydata test.out
+
+distclean maintainer-clean realclean:	clean
+	rm -f Makefile config.status
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+	$(SHELL) config.status

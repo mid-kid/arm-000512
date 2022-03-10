@@ -1,0 +1,34 @@
+#
+# download.ith - itcl declarations for class Download
+# ----------------------------------------------------------------------
+# Implements Download window
+#
+# ----------------------------------------------------------------------
+#   Copyright (C) 1999 Cygnus Solutions
+#
+class Download {
+  inherit ManagedWin
+  
+  protected {
+    common total_bytes
+    common section
+    common bytes
+    common num_sections
+    proc dont_remember_size {} { return 1}
+  }
+  public {
+    variable filename
+
+    method constructor {args} 
+    method destructor {}
+    method update_download { sec num tot }
+    method done { {msg ""} }
+    method cancel {}
+
+    proc download_it { }
+    proc do_download_hooks {}
+    proc download_hash { section num }
+    
+  }
+}
+

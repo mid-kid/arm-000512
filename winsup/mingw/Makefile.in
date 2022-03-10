@@ -1,0 +1,145 @@
+# Makefile.in for the winsup/mingw directory.
+# Copyright (c) 1995, 1996, 1997, 1998 Cygnus Solutions
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+# This makefile requires GNU make.
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+objdir = .
+
+target_alias = @target_alias@
+prefix = @prefix@
+
+program_transform_name = @program_transform_name@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+tooldir = $(exec_prefix)/$(target_alias)
+datadir = @datadir@
+infodir = @infodir@
+includedir = @includedir@
+
+SHELL = /bin/sh
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+mkinstalldirs = $(SHELL) $(srcdir)/../../mkinstalldirs
+
+CC = @CC@
+# FIXME: Which is it, CC or CC_FOR_TARGET?
+CC_FOR_TARGET = $(CC)
+AS_FOR_TARGET = $(AS_FOR_TARGET)
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+INCLUDES = -I$(srcdir)/include -I$(srcdir)/../include/ -nostdinc++
+LIBGCC=`$(CC) -print-libgcc-file-name`
+ALL_CFLAGS = $(CFLAGS) $(INCLUDES)
+ALL_CXXFLAGS = $(CXXFLAGS) $(INCLUDES)
+
+AS = @AS@
+AR = @AR@
+LD = @LD@
+AR_FLAGS = rcv
+RANLIB = @RANLIB@
+DLLTOOL = @DLLTOOL@
+DLLTOOLFLAGS = 
+
+lib%.a:%.def
+	$(DLLTOOL) --as=$(AS) -k --dllname $*.dll --output-lib lib$*.a --def $<
+
+.SUFFIXES: .y $(SUFFIXES) .cc .def .a
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $< -o $@
+
+CRT0S = crt1.o dllcrt1.o crt2.o dllcrt2.o CRT_noglob.o
+MINGW_OBJS = CRTglob.o CRTfmode.o CRTinit.o dirent.o dllmain.o gccmain.o main.o  
+MOLD_OBJS = ctype_old.o string_old.o
+
+LIBS = libcrtdll.a libmsvcrt.a libmsvcrt20.a libmsvcrt40.a libmingw32.a libmoldname.a
+
+all : $(LIBS) $(CRT0S)
+
+libmingw32.a: $(MINGW_OBJS)
+	$(AR) rc libmingw32.a $(MINGW_OBJS)
+	$(RANLIB) libmingw32.a
+
+libmoldname.a: $(srcdir)/moldname.def $(MOLD_OBJS)
+	$(DLLTOOL) --as $(AS) -k -U	\
+		--dllname crtdll.dll	\
+		--def $(srcdir)/moldname.def	\
+		--output-lib libmoldname.a
+	$(AR) rc libmoldname.a $(MOLD_OBJS)
+	$(RANLIB) libmoldname.a
+
+
+crt2.o dllcrt2.o:
+	$(CC) -c -D__MSVCRT__ $(ALL_CFLAGS) $< -o $@
+
+clean:
+	-rm -f *.o *.a *~ core a.out
+
+info:
+
+info-html:
+
+install-info: info
+
+install: all
+	$(mkinstalldirs) $(bindir) $(tooldir)/lib 
+	for i in $(LIBS); do \
+		$(INSTALL_DATA) $$i $(tooldir)/lib/$$i ; \
+	done
+	for i in $(CRT0S); do \
+	$(INSTALL_DATA) $$i $(tooldir)/lib/$$i ; \
+	done
+	for sub in . sys ; do \
+	$(mkinstalldirs) $(tooldir)/include/mingw32/$$sub ; \
+		for i in $(srcdir)/include/$$sub/*.h ; do \
+		  $(INSTALL_DATA) $$i $(tooldir)/include/mingw32/$$sub/`basename $$i` ; \
+		done ; \
+	done
+
+#
+# Dependancies
+#
+libcrtdll.a: $(srcdir)/crtdll.def
+libmsvcrt.a: $(srcdir)/msvcrt.def
+libmsvcrt20.a: $(srcdir)/msvcrt20.def
+libmsvcrt40.a: $(srcdir)/msvcrt40.def
+CRT_noglob.o: $(srcdir)/CRT_noglob.c
+CRTfmode.o: $(srcdir)/CRTfmode.c
+CRTglob.o: $(srcdir)/CRTglob.c
+CRTinit.o: $(srcdir)/CRTinit.c
+crt1.o: $(srcdir)/crt1.c $(srcdir)/init.c
+crt2.o: $(srcdir)/crt1.c $(srcdir)/init.c
+ctype_old.o: $(srcdir)/ctype_old.c
+dllcrt1.o: $(srcdir)/dllcrt1.c $(srcdir)/init.c
+dllcrt2.o: $(srcdir)/dllcrt1.c $(srcdir)/init.c
+dirent.o: $(srcdir)/dirent.c
+dllmain.o: $(srcdir)/dllmain.c
+main.o: $(srcdir)/main.c
+oldnames.o: $(srcdir)/oldnames.c
+string_old.o: $(srcdir)/string_old.c
+
+Makefile: Makefile.in config.status configure
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck

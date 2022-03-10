@@ -1,0 +1,14 @@
+# Script to build the demo directories for the i386 aout dos release.
+
+demodir=$1
+srcdir=$2
+
+mkdir $demodir
+unix2dos hello.c $demodir/demo/hello.c
+unix2dos makefile $demodir/demo/makefile
+
+# copy in some extra files
+mkdir $demodir/src
+mkdir $demodir/src/sys
+mkdir $demodir/src/sys/include
+

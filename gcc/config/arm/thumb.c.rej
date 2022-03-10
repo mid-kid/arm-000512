@@ -1,0 +1,20 @@
+***************
+*** 977,983 ****
+  far_jump_used_p (void)
+  {
+    rtx insn;
+! 
+    for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
+      {
+        if (GET_CODE (insn) == JUMP_INSN
+--- 978,987 ----
+  far_jump_used_p (void)
+  {
+    rtx insn;
+! 
+!   if (current_function_has_far_jump)
+!     return 1;
+! 
+    for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
+      {
+        if (GET_CODE (insn) == JUMP_INSN

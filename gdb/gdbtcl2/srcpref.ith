@@ -1,0 +1,30 @@
+#
+# SrcPref
+# ----------------------------------------------------------------------
+# Implements GDB source preferences dialog
+#
+# ----------------------------------------------------------------------
+#   AUTHOR:  Martin M. Hunt	hunt@cygnus.com     
+#            Cygnus Solutions   
+#
+
+class SrcPref {
+  inherit ManagedWin ModalDialog
+
+  private {
+    variable _saved  ;# These are the saved values...
+    variable current_disassembly_flavor ""
+
+    method build_win {}
+    method _apply {}
+    method _cancel {}
+    method _save {}
+    method set_flavor {w new_mode}
+    method _pick {color win tag}
+  }
+
+  public {
+    method constructor {args}
+  }
+}
+

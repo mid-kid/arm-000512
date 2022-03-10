@@ -1,0 +1,46 @@
+1999-10-29  Gary Thomas  <gthomas@cygnus.co.uk>
+
+	* server-main.c (handle_resume): Forget 'selected' thread after
+	starting execution (continue, step).  Only print 'Executing'/'Stopped' 
+	messages if --debug was specified.
+	(handle_thread): Fix parsing of thread numbers (use hex).
+
+	* rdi150-low.c: Change to get read/write of CPSR register to work.
+
+1999-10-13  Gary Thomas  <gthomas@cygnus.co.uk>
+
+	* server-main.c: Add/complete support for remote thread functions.
+	Add support for watchpoints.
+
+	* remote-utils.c: Rework SIGIO support using 'yield()', since
+	SIGIO doesn't work well on Cygwin.
+
+	* rdi150-low.c (yield_func): New function - used to regain control
+	while executing on target - required in order to abort execution.
+	Add support for remote thread functions and watchpoints.
+
+	* low.h: Update/add for new thread support.
+
+1999-09-03  Felix Lee  <flee@cygnus.com>
+
+	* configure.in (--with-multi-ice): add.
+	* configure: regen.
+
+1999-07-30  James Ingham  <jingham@leda.cygnus.com>
+
+	* server-win.c (console_control_handler): Close and exit manually
+	when you get the Control-C.
+
+1999-06-24  Jason Molenda  (jsm@bugshack.cygnus.com)
+
+	* Makefile.in: Add empty html and install-html targets.
+
+1999-05-28  James Ingham  <jingham@cygnus.com>
+
+	* arm-singlestep.c (arm_pc_is_thumb): Take out some unnecessary
+	debugging info.
+
+	* Added Files: server-main.c, server-win.c, rdi150-low.c,
+	remote-utils.c, utils.c, server.h, low.h, remote-utils.h
+ 	
+

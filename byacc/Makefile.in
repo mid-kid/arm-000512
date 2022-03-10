@@ -1,0 +1,164 @@
+# Seriously hacked by K. Richard Pixley <rich@cygnus.com>.
+
+VPATH = @srcdir@
+srcdir = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+libdir = @libdir@
+
+datadir = @datadir@
+
+mandir = @mandir@
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+man9dir = $(mandir)/man9
+infodir = @infodir@
+includedir = @includedir@
+
+SHELL = /bin/sh
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+EXEEXT = @EXEEXT@
+
+AR = ar
+AR_FLAGS = qv
+MAKEINFO = makeinfo
+
+HDRS	      = defs.h
+
+CFLAGS	      = -g
+
+MORE_CFLAGS   = -DNDEBUG @DEFS@
+
+LDFLAGS	      =
+
+LIBS	      =
+
+LINKER	      = $(CC)
+
+MAKEFILE      = Makefile
+
+OBJS	      = closure.o \
+		error.o \
+		lalr.o \
+		lr0.o \
+		main.o \
+		mkpar.o \
+		output.o \
+		reader.o \
+		skeleton.o \
+		symtab.o \
+		verbose.o \
+		warshall.o
+
+PRINT	      = pr -f -l88
+
+PROGRAM	      = byacc$(EXEEXT)
+
+SRCS	      = closure.c \
+		error.c \
+		lalr.c \
+		lr0.c \
+		main.c \
+		mkpar.c \
+		output.c \
+		reader.c \
+		skeleton.c \
+		symtab.c \
+		verbose.c \
+		warshall.c
+
+STAGESTUFF = $(OBJS) $(PROGRAM)
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(MORE_CFLAGS) $<
+
+all:		$(PROGRAM)
+.PHONY: check installcheck
+check:
+installcheck:
+
+info: byacc.info
+
+dvi:
+
+install-info:	byacc.info
+	$(INSTALL) byacc.info $(infodir)
+
+clean-info:;	rm -f byacc.info*
+
+$(PROGRAM):     $(OBJS) $(LIBS)
+		$(LINKER) $(CFLAGS) $(LDFLAGS) -o $(PROGRAM) $(OBJS) $(LIBS) $(LOADLIBES)
+
+byacc.info:	byacc.texi
+		$(MAKEINFO) -o byacc.info $(srcdir)/byacc.texi
+
+clean:		clean-info
+		rm -f $(OBJS) $(PROGRAM)
+
+mostlyclean:	clean
+
+distclean:	clean
+		rm -f Makefile config.cache config.log config.status 
+
+maintainer-clean realclean:	distclean
+
+clobber:;	@rm -f $(OBJS) $(PROGRAM)
+
+depend:;	@mkmf -f $(MAKEFILE) PROGRAM=$(PROGRAM) DEST=$(DEST)
+
+index:;		@ctags -wx $(HDRS) $(SRCS)
+
+install:	all
+		$(INSTALL_PROGRAM) $(PROGRAM) $(bindir)/$(PROGRAM)
+		$(INSTALL_DATA) $(srcdir)/manpage $(man1dir)/byacc.1
+
+listing:;	@$(PRINT) Makefile $(HDRS) $(SRCS) | lpr
+
+lint:;		@lint $(SRCS)
+
+program:        $(PROGRAM)
+
+tags:           $(HDRS) $(SRCS); @ctags $(HDRS) $(SRCS)
+
+etags: 		TAGS
+
+TAGS: force
+	etags `$(MAKE) ls`
+
+ls:
+	for i in $(HDRS) $(SRCS) ; do \
+		echo $(srcdir)/$$i ; \
+	done
+
+force:
+
+Makefile: Makefile.in config.status
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+###
+closure.o: defs.h
+error.o: defs.h
+lalr.o: defs.h
+lr0.o: defs.h
+main.o: defs.h
+mkpar.o: defs.h
+output.o: defs.h
+reader.o: defs.h
+skeleton.o: defs.h
+symtab.o: defs.h
+verbose.o: defs.h
+warshall.o: defs.h

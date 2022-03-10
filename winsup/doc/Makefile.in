@@ -1,0 +1,60 @@
+# -*- Makefile -*- for winsup/doc
+# Copyright (c) 1998 Cygnus Solutions.
+#
+# This file is part of Cygwin.
+#
+# This software is a copyrighted work licensed under the terms of the
+# Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
+# details.
+
+SHELL = @SHELL@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+CC = @CC@
+exeext = @host_exeext@
+
+all_ignored:
+	-$(MAKE) all
+
+# You can add cygwin-api/cygwin-api.html if you want to.
+all : \
+	cygwin-ug/cygwin-ug.html \
+	cygwin-ug-net/cygwin-ug-net.html \
+	cygwin-api-int/cygwin-api-int.html
+
+install:	all_ignored
+
+cygwin-ug/cygwin-ug.html : cygwin-ug.sgml doctool
+	-db2html $<
+cygwin-ug.sgml : cygwin-ug.in.sgml ./doctool Makefile
+	./doctool -m -d $(srcdir) -d $(srcdir)/../utils -s $(srcdir) -o $@ $<
+
+cygwin-ug-net/cygwin-ug-net.html : cygwin-ug-net.sgml doctool
+	-db2html $<
+cygwin-ug-net.sgml : cygwin-ug-net.in.sgml ./doctool Makefile
+	./doctool -m -d $(srcdir) -d $(srcdir)/../utils -s $(srcdir) -o $@ $<
+
+cygwin-api/cygwin-api.html : cygwin-api.sgml
+	-db2html $<
+cygwin-api.sgml : cygwin-api.in.sgml ./doctool Makefile
+	./doctool -m -d $(srcdir)/.. -s $(srcdir) -o $@ $<
+
+cygwin-api-int/cygwin-api-int.html : cygwin-api-int.sgml
+	-db2html $<
+cygwin-api-int.sgml : cygwin-api.in.sgml ./doctool Makefile
+	./doctool -i -m -d $(srcdir)/.. -s $(srcdir) -b cygwin-api-int -o $@ $<
+
+./doctool : doctool.c
+	gcc -g $< -o $@
+
+# For auto-rebuilding the Makefile
+
+Makefile: Makefile.in config.status configure
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+# Automatic doctool dependencies usually follow this line.
+

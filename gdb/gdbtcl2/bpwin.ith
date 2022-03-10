@@ -1,0 +1,47 @@
+#
+# BpWin - Implements breakpoint window for gdb
+# ----------------------------------------------------------------------
+#   AUTHOR:  Martin M. Hunt <hunt@cygnus.com>
+#   Copyright (C) 1997, 1998 Cygnus Solutions
+#
+
+class BpWin {
+  inherit EmbeddedWin GDBWin
+
+  public {
+    variable tracepoints 0
+
+    method constructor {args}
+    method destructor {}
+    method bp_select {r}
+    method bp_able { i } 
+    method bp_remove { i }
+    method bp_type { i }
+    method update {action bpnum addr {linenum {}} {file {}} {type 0} args}
+    method bp_all { command }
+    method get_actions {bpnum}
+    method toggle_threads {}
+    method reconfig {} 
+    method goto_bp {r}
+
+  }
+
+  private {
+    variable twin
+    variable next_row 0
+    variable index_to_bpnum
+    variable Index_to_bptype
+    variable temp
+    variable mbar 1
+    variable selected 0
+    variable bg1
+    variable Menu
+    variable show_threads	;#cached copy of [pref get gdb/bp/show_threads]
+    
+    method build_win {}
+    method bp_add { bpnum {tracepoint 0}}
+    method bp_modify { bpnum {tracepoint 0} } 
+    method bp_delete { bpnum }
+  }
+
+}

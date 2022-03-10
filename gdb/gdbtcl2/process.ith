@@ -1,0 +1,37 @@
+#
+# ProcessWin
+# ----------------------------------------------------------------------
+# Implements a process window with a list of threads, tasks, and/or
+# processes to debug.
+#
+# ----------------------------------------------------------------------
+#   AUTHOR:  Martin M. Hunt <hunt@cygnus.com>
+#   Copyright (C) 1998, 1999 Cygnus Solutions
+#
+
+class ProcessWin {
+  inherit EmbeddedWin GDBWin
+  
+  private {
+    variable top
+    variable lb
+    variable id
+    variable Running 0
+    variable protect_me 0
+
+
+    method build_win {}
+    method change_context {y}
+    method cursor {glyph}
+    method change_frame {y}
+    method update {}
+    method busy {}
+    method idle {}
+  }
+
+  public {
+    method reconfig {}
+    method constructor {args} 
+    method destructor {}
+  }
+}

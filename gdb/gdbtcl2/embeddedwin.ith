@@ -1,0 +1,11 @@
+class EmbeddedWin {
+  inherit ManagedWin
+
+  constructor {args} {
+    debug "EmbeddedWin::constructor $args"
+  }
+  
+  destructor {
+    debug "EmbeddedWin::destructor"
+  }
+}

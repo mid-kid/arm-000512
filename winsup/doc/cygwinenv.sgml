@@ -1,0 +1,63 @@
+<sect1 id="using-cygwinenv"><title>The CYGWIN environment variable</title>
+
+<para>The CYGWIN environment variable is used to configure many global
+settings for the Cygwin runtime system. It contains the options listed below.
+</para>
+
+<para>Each option should be separated with a space [FIXME: can there
+be many spaces?].  Many options can be turned off by prefixing with
+"no".
+</para>
+
+<para>(no)export - if set, the final values of these settings are
+re-exported to the environment as $CYGWIN again.</para>
+
+<para>(no)title - if set, the title bar reflects the name of the
+program currently running.  Default is not set.</para>
+
+<para>(no)strip_title - if set, strips the directory part off the
+window title.  Default is not set.</para>
+
+<para>Under Win9x the title bar is always enabled and it is stripped
+by default.  In order not to strip, specify "title" or "title
+nostrip_title".</para>
+
+<para>(no)glob - if set, command line arguments containing UNIX-style
+file wildcard characters (brackets, question mark, asterisk) are
+expanded into lists of files that match those wildcards.  This is
+applicable only to programs running from a Windows command line prompt.
+Default is set.</para>
+
+<para>(no)tty - if set, Cygwin enables extra support (i.e., termios) for
+UNIX-like ttys.  Defaults to not set. This option must be set before
+starting a shell.</para>
+
+<para>(no)binmode - if set, pipes and unspecified file opens default
+to binary mode (no CR/LF/Ctrl-Z translations) instead of text mode.
+Defaults to not set (text mode). This option must be set before starting
+a shell to have an effect of redirection. </para>
+
+<para>strace=n[:cache][,filename] - configures system tracing.  Off by
+default, setting various bits in n (a bit flag) enables various types
+of system messages.  Setting n to 1 enables most messages.  Other
+values can be found in sys/strace.h.  The :cache option
+lets you specify how many lines to cache before flushing the output
+(example: strace=1:20).  The filename option lets you send the
+messages to a file instead of the screen. </para>
+
+<para>(no)ntea - if set, use the full NT Extended Attributes to store
+UNIX-like inode information.  Warning: this may create additional
+<emphasis>large</emphasis> files on non-NTFS partitions.  This option
+only operates under Windows NT. Defaults to not set. </para>
+
+<para>(no)reset_com - if set, serial ports are reset to 9600-8-N-1
+with no flow control when used (warning: this is done at open time and
+when handles are inherited).  Defaults to set.</para>
+
+<para>(no)envcache - If set, environment variable conversions (between
+Win32 and POSIX) are cached.  Note that this is may cause problems if
+the mount table changes, as the cache is not invalidated and may
+contain values that depend on the previous mount table
+contents. Defaults to set.</para>
+
+</sect1>

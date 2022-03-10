@@ -1,0 +1,71 @@
+# -----------------------------------------------------------------------------
+# NAME:
+#	class DebugWin
+#
+# DESC:
+#	This class implements a debug output window to display internal
+#	debugging information. It can handle debugging messages, tracing,
+#	and eventually profiling.
+#
+# NOTES:
+#	This window is for developers.
+#
+# -----------------------------------------------------------------------------
+class DebugWin {
+  inherit ManagedWin
+
+  private {
+    variable _t
+    variable _colors {
+      {I green}
+      {W yellow}
+      {E orange}
+      {X red}
+    }
+    variable _bigstr "                                                                                                                                                                                                             "
+    method build_win {}
+    method _source_all {}
+    method _clear {}
+    method _mark_old {}
+    method _save_contents {}
+  }
+
+  public {
+    method constructor {args}
+    method destructor {}
+    method puts {level cls func msg}
+    method put_trace {enter level func ar}
+    method loadlog {}
+  }
+}
+
+# -----------------------------------------------------------------------------
+# NAME:
+#	class DebugWinDOpts
+#
+# DESC:
+#	This class implements a debug options dialog for the DebugWin.
+#	Currently this consists os a selection dialog to choose which
+#	messages to print. Eventually it could also include a filter
+#	for different priorities and color selections.
+#
+# NOTES:
+#	This window is for developers.
+#
+# -----------------------------------------------------------------------------
+class DebugWinDOpts {
+  inherit ManagedWin
+
+  public {
+    method constructor {args} {}
+    method destructor {}
+  }
+
+  private {
+    variable _classes
+    method build_win {}
+    method _all {}
+    method _apply {}
+  }
+
+}

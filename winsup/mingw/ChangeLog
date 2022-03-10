@@ -1,0 +1,95 @@
+Wed Dec 30 00:05:57 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+	* include/signal.h (sig_atomic_t): Define.
+	(NSIG): Define.
+	* include/malloc.h: Import defs from deprecated alloc.h.
+	* include/alloc.h: Remove.
+
+	From "Daniel J. Rodriksson" <djr@dit.upm.es>:
+	* include/sys/types.h (_dev_t): Should be unsigned int for
+	MSVCRT.
+	* include/sys/stat.h (struct stat): st_uid is of type short. Use
+	_off_t instead of long for st_size.
+
+Mon Oct 19 18:23:35 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+        * include/errno.h (sys_errlist, sys_nerr): Move from here ...
+        * include/stdlib.h: Here.
+
+Mon Oct 19 18:23:35 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+        * include/{ctype.h,dos.h,io.h,string.h,time.h,sys/types.h,
+        sys/utime.h}: Protect stddef.h in RC_INVOKED macro.
+
+Mon Oct 19 18:23:35 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+        * setjmp.h (_JBTYPE, _JBLEN): Define correctly.
+        (jmpbuf): typedef using above. 
+        (setjmp, longjmp): Prototype using jmpbuf.
+
+        Merge with Colin Peters' 980701 snapshot. I've ignored changes to
+        obsolescent imported names, ie., from __imp__ to _imp___. 
+
+        * include/sys/param.h: Delete. Doesn't belong.
+        * include/sys/times.h: Delete. incorrect file.
+
+Mon Oct 19 18:23:35 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+        * include/assert.h (assert): Lose the trailing semicolon.
+
+Mon Oct 19 18:23:35 1998  Mumit Khan  <khan@xraylith.wisc.edu>
+
+        * include/math.h (matherr): Declare.
+        * include/stdio.h (fileno, _fileno): Declare.
+        * include/stdlib.h (environ, _environ): Fix to use runtime DLL.
+
+        From Earnie Boyd:
+        * include/stdio.h (getw, putw): Declare.
+        * include/stdlib.h (MAX_{DRIVE,DIR,FNAME,EXT}): Fix. 
+
+Thu Oct 15 23:38:46 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	* Makefile.in: define LIBS, install them
+
+Fri Oct  9 17:46:45 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	Import July 1998 Snapshot of Mingw.
+	From Colin Peters <colinpeters@geocities.com>.
+	Replace all files except configure.in, Makefile.in.
+	* Makefile.in: update for new files
+
+Tue Mar 24 17:33:26 1998  Stu Grossman  <grossman@bhuna.cygnus.co.uk>
+
+	* configure:  Regenerate with autoconf 2.12.1 to fix shell issues for
+	NT native builds.
+
+Fri Aug 15 18:23:43 1997  Rob Savoye  <rob@cygnus.com>
+
+	New directory for the minimalist cygwin environment.
+	
+	* crtglob.c: New file. Turn on file globbing support. 
+	* crt_noglob.c: New file. Turn off file globbing support. 
+	* ctype_old.c: New file. Wrappers for functions that don't
+	have an underscore.
+	* dirent.c: New file. Directory routines readdir, opendir, closedir.
+	* dllcrt0.c: New file. Initialization code to use crtdll.dll.
+	* dllmain.c: New file. A stub DllMain function.
+	* hugeval.c: New file. A gross hack to define HUGE_VAL.
+	* init.c: New file. Common code to initialize standard file
+	handles and command line arguments.
+	* main.c: New file. A main for programs that only call WinMain.
+	* mcrt0.c: New file. Default crt0 for mingw32.
+	* oldnames.c: New File. Wrappers for functions that don't
+	have an underscore.
+	* string_old.c:  New File.
+	* include/{assert.h,ctype.h,errno.h,float.h,limits.h,locale.h
+	math.h,nonansi,setjmp.h,signal.h,stdarg.h,stddef.h,stdio.h,stdlib.h
+	string.h,tchar.h,time.h,wchar.h}: New header files for mingw.
+	* include/sys/types.h: New header file for mingw.
+	* include/nonansi/{alloc.h,conio.h,dir.h,direct.h,dirent.h
+	fcntl.h,io.h,malloc.h,mem.h,memory.h,process.h,share.h,unistd.h
+	utime.h,values.h,varargs.h}: New header files for mingw.
+	* include/nonansi/sys/{fcntl.h,locking.h,stat.h,time.h
+	timeb.h,unistd.h}: New header files for mingw.
+	* Makefile.in,configure.in: Build and configure support.
+	* configure: Generated from autoconf 2.12 with Cygnus patches.

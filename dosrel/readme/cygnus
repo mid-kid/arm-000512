@@ -1,0 +1,260 @@
+About Cygnus Support
+********************
+
+   Cygnus Support, founded in 1989, provides commercial support for
+free software.  *Why free software?* Free software is fast, powerful,
+and more portable than its proprietary counterparts.  It evolves faster
+because users who want to make improvements are free to do so.  Cygnus
+tracks these improvements and integrates them into tested, stable
+versions ready for commercial use, then backs this software with
+comprehensive support.
+
+   The problem with free software has always been that your company's
+programmers and engineers had to spend time maintaining the tools as
+well as using them, which tied up company resources. Cygnus frees up
+those resources by supplying products and services which allow you to
+use state-of-the-art tools without the problems of maintenance. You can
+now choose to use free software and get the advantages of powerful and
+prompt support, combining the best of both. We provide up-to-the minute
+releases, for those who need the very latest version.
+
+   Our team of experienced engineers include the leading architects for
+G++, GDB, GAS, and BFD. We developed and use PRMS, the most
+comprehensive bug-reporting and tracking software in the business.
+
+   Cygnus makes sure that our customers' problems get solved the right
+way. No grungy little programs, no klugey fixes that don't generalize,
+no work-arounds that end up being features instead of temporary
+situations. If you have a problem, you get in touch with the developers
+of the software, not an intermediary. (For details on the variety of
+support services available from Cygnus, see the section in this
+introduction on support contracts.
+
+   Because all our improvements are also free software, you can
+distribute them widely within your organization, or to your customers,
+without extra cost. No unwieldy licenses to manage, and no worries about
+buying extra copies.
+
+                                  Cygnus Support
+     Support hotline: +1 415 903 1401          email: info@cygnus.com
+     
+     HEADQUARTERS                                                  EAST COAST
+     1937 Landings Drive                                   One Kendall Square
+     Mountain View, CA 94043 USA                      Cambridge, MA 02139 USA
+     +1 415 903 1400                                          +1 617 494 1040
+     +1 415 903 0122 fax                                  fax +1 617 494 1325
+
+
+
+Cygnus Support Developer's Kit
+******************************
+
+   This Developer's Kit puts at your disposal, in a single coordinated
+and tested release, some of the best software development tools
+available.  The Kit is available for "native development" (where the
+same kind of system can run both the tools and the code you develop with
+them) and for "cross-development" (where one system, the "host", runs
+the tools to develop software for another system, the "target").
+
+   Cygnus Support has ported GNU tools to over sixty different
+platforms (see the accompanying release notes for the most current
+list).  As part of our service, we integrate all our tools to ensure
+that they all work together.  Our developers use a regression testing
+method that not only checks for problems with a single tool, but across
+all the tools. We check for problems that a change in one may cause in
+another. We don't ship until we know it works.
+
+
+
+
+Free Software
+*************
+
+   If you find our Developer's Kit useful, please feel free to give or
+sell copies of the software and documentation to anyone you like.
+
+   In this release, we've assembled the most current ports of the
+development tools, tested them, made sure they work well together, and
+made them easy to install. The installation tape comes with binaries
+already compiled for your system, and we've made them easy to
+reconfigure and recompile from source.
+
+   These tools are free software; they are part of the GNU project,
+produced by the Free Software Foundation (FSF).  "GNU" is the name of
+the FSF's evolving operating system (in speech, the `G' is sounded).
+Cygnus Support collaborates with the FSF in developing these tools.
+(For more information on the relationship between Cygnus Support and
+the FSF, please see the release notes included in this distribution.)
+
+   Cygnus Support exists to help our clients exploit their freedom in
+using, adapting, or enhancing this software.  Cygnus products are "free
+software", protected by the GNU General Public License ("GPL").  The
+GPL gives you the freedom to copy or adapt any program it licenses--but
+every person getting a copy also gets with it the freedom to modify
+that copy (which means that they must get access to the source code),
+and the freedom to distribute further copies.  Traditional software
+companies use copyrights to limit your freedoms; the GPL is designed to
+preserve your freedoms.
+
+   Fundamentally, the General Public License is a license which grants
+you these freedoms, and only imposes restrictions to ensure that no one
+can take these freedoms away from anyone else.
+
+   For full details, see the *LICENSE* section in this manual set, or
+the file `COPYING'.
+
+
+Manuals
+*******
+
+These manuals are included in a hardcopy, bound format in this Cygnus
+Progressive Release. For convenience we have bound them in two volumes:
+
+     Volume I                     Volume II
+     .....................................................................
+     Introduction		     The GNU C++ Iostream Library
+     
+     Installation Notes 	     User's Guide to the GNU C++ Library
+     
+     Release Notes		     The Cygnus C Support Library
+     
+     GNU C++ Renovation Project      The Cygnus C Math Library
+     
+     Reporting Problems	     	     The C Preprocessor
+     
+     GNU Online Documentation        Using as
+     
+     Using GNU CC		     Using ld
+     
+     Debugging with GDB	             The GNU Binary Utilities
+
+
+     GNU General Public License      Comparing and Merging Files: diff, diff3,
+                                     sdiff, cmp, and patch
+     
+     GNU Make: A Program for Directing Recompilation
+
+Source for all documentation is also included.
+
+   The manuals are designed for easy online browsing.  For online use,
+the accompanying software distribution tape includes all the printed
+manuals, and also the following documents:
+
+`FLEX: A Fast Lexical Analyzer Generator'
+     Generates lexical analyzers suitable for GNU `cc' and other
+     compilers.
+
+`Texinfo: The GNU Documentation Format'
+     How you can use TeX to print these manuals, and how to write your
+     own manuals in this style.
+
+`Using and Porting GNU CC'
+     Detailed information about what's needed to put `gcc'  on different
+     platforms, or to modify `gcc'.  Also includes all the information
+     from the printed manual `Using GNU CC'.
+
+`Cygnus configure'
+     Details on how to use the configuration program used in Cygnus
+     releases.
+
+`GNU Coding Standards'
+     A complete discussion of the coding standards used by the GNU
+     project.
+
+`BYacc'
+     A discussion of the "Berkeley Yacc" parser generator.
+
+On the Sun-3 and Sun-4 (SunOS 4.1 or Solaris 2) platforms, the following
+manual is also provided online:
+
+`GNU gprof'
+     Details on the GNU performance analyzer.
+
+Finally, `man' pages are included for all the programs in the release.
+
+   You have the freedom to copy the manuals, like the software they
+cover; each manual's copyright statement includes the necessary
+permissions.  The manuals themselves are also free software, and the
+source for them is also available on the tape.
+
+Conventions
+-----------
+
+   Our manuals use these conventions to help you distinguish commands,
+filenames, and other program-specific objects from the descriptive text.
+
+`Typewriter-text'
+     Indicates text that is a literal example of a piece of a program,
+     such as environmental variable names like `EDITOR'. It will also
+     indicate keyboard characters you should type, or other literal
+     bits of text from a program, such as filenames or examples.
+
+key-name
+     Indicates the conventional name for a special key on a keyboard,
+     such as RET or DEL.
+
+GENERIC-NAME
+     Stands for another piece of text. For example, in the command
+     description "To delete the file named FILENAME, type `rm
+     FILENAME'." FILENAME stands for the file you want to delete, no
+     matter what you've named it.
+
+
+
+Your Support Contract
+*********************
+
+   This documentation set was provided as part of a support package
+from Cygnus Support. GNU development tools provide a powerful,
+integrated applications development environment. Cygnus provides the
+support that enables you to optimize your use of these tools.  Cygnus
+is one of the primary develpment centers for GNU tools.  Your Cygnus
+support contract links you directly with the developers.
+
+   With this documentation, Cygnus Support has provided the latest
+fully-tested release of the GNU tools, preconfigured for your supported
+system.
+
+Updates to your GNU toolchain
+-----------------------------
+
+   Every quarter during the period of your support contract, Cygnus
+provides an updated toolchain, complete with the latest enhancements
+and improvements.  The updates also include bug fixes and updated
+documentation. You can get these updated toolchains by requesting them.
+
+   You will also receive the Cygnus Engineering newsletter, `Inside
+Cygnus Engineering,' which will keep you informed about release dates,
+improvements, new supported platforms, and new products. We also request
+information about your needs via surveys in this newsletter.
+
+Contacting Cygnus
+-----------------
+
+   You can reach Cygnus Support by email, phone, or fax.
+
+   *E-mail*. Use `send-pr', part of the supplied toolchain, to submit a
+problem report. *Note Reporting Trouble: Bugs. Questions can also be
+sent to `info@cygnus.com'
+
+   *Phone*. Cygnus can be reached at: (415) 903-1400. Our support
+hotline number is: (415) 903-1401.
+
+   *Fax*. Send faxes to Cygnus at: (415) 903-0122. Faxes are only
+answered 8 am--5pm, Monday-Friday. Critical bug reports should be sent
+with `send-pr'.
+
+Future Needs
+------------
+
+   The availability of source code enables anyone to enhance the GNU
+tools.  While Cygnus is doing the greatest amount of ongoing
+development, many other users around the world are also contributing
+enhancements and improvments.  Cygnus integration and regression
+testing ensures that enhancements made elsewhere can work with Cygnus'
+developments.
+
+   As your needs evolve, so do the capabilities of the GNU development
+tools, and the support services available from Cygnus Support.
+
+

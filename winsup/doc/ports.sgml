@@ -1,0 +1,6 @@
+<sect1 id="using-ports"><title>Serial and parallel ports</title>
+
+<para>You can open serial ports using pathnames such as 
+<filename>/dev/com1</filename>. </para>
+
+</sect1>

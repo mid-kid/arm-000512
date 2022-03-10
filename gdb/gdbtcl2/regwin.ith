@@ -1,0 +1,51 @@
+class RegWin {
+  inherit EmbeddedWin GDBWin
+  
+  private {
+    variable reg_display_list {}
+    variable num_regs 0
+    variable nRows
+    variable nCols
+    variable changed_reg_list {}
+    variable oldValue
+    variable ScrolledWin
+    variable Menu
+    variable Editing -1
+    variable selected -1
+    variable mbar 1
+    variable Running 0
+    
+    common HighlightForeground {}
+    common NormalForeground {}
+    
+    method init_reg_display_vars {args}
+    method dimensions {}
+    method fixLength {s size where}
+    method build_win {}  
+  } 
+
+  public {
+    proc save_reg_display_vars {} 
+
+    method constructor {args}
+    method destructor {}
+    method reg_select_up {}
+    method reg_select_down {}
+    method reg_select_right {}
+    method reg_select_left {}
+    method reg_select { r }
+    method but3 {rn X Y}
+    method display_all {} 
+    method delete_from_display_list {rn} 
+    method edit {r} 
+    method acceptEdit {r} 
+    method unedit {} 
+    method update {}
+    method idle {}
+    method reconfig {}
+    method busy {}
+  }
+
+
+}
+

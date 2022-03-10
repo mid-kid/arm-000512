@@ -1,0 +1,82 @@
+# -----------------------------------------------------------------------------
+# NAME:
+#	class HtmlViewer
+#
+# DESC:
+#	This class implements a simple HTML browser.  It has both pulldown
+#	menus and buttons for navigating.  It uses the scrolledhtml iwidget
+#	to do its rendering.
+#
+# NOTES:
+#	Currently used as a help window.
+#
+# -----------------------------------------------------------------------------
+class HtmlViewer {
+  inherit EmbeddedWin
+  
+  public {
+    variable topics { 
+      {index index.html}
+      {"Breakpoint Window" breakpoint.html}
+      {"Console Window" console.html }
+      {"Function Browser" browser.html }
+      {"Locals Window" locals.html }
+      {"Memory Window" memory.html}
+      {"Register Window" register.html}
+      {"Source Window" source.html}
+      {"Stack Window" stack.html}
+      {"Target Window" target.html }
+      {"Thread Window" thread.html }
+      {"Watch Window" watch.html}
+    }
+    variable file "index.html"
+    method back {}
+    method forward {}
+    method link {link}
+    method load {link}
+    method close {}
+    method constructor {args}
+    proc open_help {file}
+  }
+  
+  private {
+    variable _html
+    variable _links
+    variable _m
+    variable _f
+    
+    method _enable {on args}
+    method _buildwin {}
+  }
+  
+}
+
+# -----------------------------------------------------------------------------
+# NAME:
+#	class PageStack
+#
+# DESC:
+#	Implements a stack-like class for saving and recalling items
+#	like pages in a help browser. It differs from a traditional
+#	stack only by the 'back' and 'next' methods which move up and
+#	down the stack without disturbing it, unlike 'push' and 'pop'.
+#
+# NOTES:
+#	Currently used by the HtmlViewer class.
+#
+# -----------------------------------------------------------------------------
+class PageStack {
+  private {
+    variable _ptr -1
+    variable _max -1
+    variable _stack
+  }
+  public {
+    method push {val}
+    method back {}
+    method next {}
+    method more {}
+    method less {}
+    method current {}
+  }
+}

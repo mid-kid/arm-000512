@@ -1,0 +1,10 @@
+# Script to build the demo directories for the i386 win32 
+
+demodir=$1
+srcdir=$2
+mkdir -p $demodir
+for i in *.c *.cc *.h makefile dll.def runme.bat dlldemo.bat ; do
+	unix2dos $i $demodir/$i
+done
+
+

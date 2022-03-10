@@ -1,0 +1,104 @@
+1999-10-14  Jonathan Larmour  <jlarmour@cygnus.co.uk>
+
+	* itcl/unix/configure.in: bracket AC_CACHE_VAL of AC_EGREP_CPP correctly
+        * itcl/win/configure.in: Likewise
+        * itk/unix/configure.in: Likewise
+        * itk/win/configure.in: Likewise
+        * itcl/unix/configure: regenerated
+        * itcl/win/configure: regenerated
+        * itk/unix/configure: regenerated
+        * itk/win/configure: regenerated
+
+1999-03-19  Keith Seitz  <keiths@cygnus.com>
+
+        * itk/win/Makefile.in (install-man): Don't install "*.3", there is
+        no man page for section 3.
+
+1999-03-18  Keith Seitz  <keiths@cygnus.com>
+
+	* iwidgets3.0.0/unix/Makefile.in (install-libraries): Don't bother with
+	making symlinks for other versions of iwidgets -- we don't use them.	
+
+1999-03-03  James Ingham  <jingham@cygnus.com>
+
+        * iwidgets3.0.0/generic/labeledframe.itk (_reconfigure): Make sure
+        that the widget has not been destroyed while in the update
+        idletasks.  FIXME - see if we can eliminate the need for this
+        update.
+
+        * iwidgets3.0.0/generic/labeledframe.itk (clientHandlesConfigure):
+        Added method to allow the user of the labeled frame to do the
+        reconfigure, so this can be batched up and reduce flashing.
+
+1999-02-24  James Ingham  <jingham@cygnus.com>
+
+        * iwidgets3.0.0/generic/labeledframe.itk: Make it derive from Widget
+        not Archetype (which was a BAD idea).  Add an interposing frame so
+        you didn't have to much with the highlightthickness of the
+        MegaWidget itself.  Doing this allows you to actually use the
+        labeledframe in derived classes.
+        * iwidgets3.0.0/generic/scrolledwidget.itk: Derive from labeledframe,
+        not labeledwidget.  This way you can add a relief around the
+        label, which looks better for scrolled text, scrolled listboxes
+        and scrolled canvases.
+        * iwidgets3.0.0/generic scrolledcanvas.itk, scrolledlistbox.itk,
+        scrolledtext.itk: Pushed throught the changes needed to get the
+        derivation from labeledframe to work.
+
+1999-03-01  DJ Delorie  <dj@cygnus.com>
+
+	* configure.in: cygwin, not cygwin32
+	* configure: ditto
+
+1999-01-30  Brendan Kehoe  <brendan@cygnus.com>
+
+	* Makefile.in (install-info info install-check): Add these null
+	rules, for the standard build process to work..
+
+1999-01-28  James Ingham  <jingham@cygnus.com>
+
+	* itcl/itcl/unix/configure.in: Check the TCL_LIB_VERSIONS_OK
+	variable, and strip out dots if it is nodots.
+	* itcl/itk/unix/configure.in: Check the TCL_LIB_VERSIONS_OK
+	variable, and strip out dots if it is nodots.
+	* itcl/itcl/unix/configure: regenerate.
+	* itcl/itk/unix/configure: regenerate.	
+
+1999-01-21  James Ingham  <jingham@cygnus.com>
+
+	* itcl/library/init.tcl (auto_import): Comment out this function.
+	It does not work, because it can not populate the source
+	namespace's export list.  There is no easy way to fix this, and
+	since it is just an optimization over the original Tcl proc, we
+	will just use Tcl one for now.
+
+1999-01-20  James Ingham  <jingham@cygnus.com>
+
+	* itcl/library/init.tcl: updated to Itcl 3.0.1.  Does not force
+	the addition of class to the auto_mkindex_parser namespace, but
+	uses the namespace import instead.
+
+1998-12-15  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Reverted back to original
+	distribution. The new panedwindow widget is now in libgui. 
+
+	* iwidgets3.0.0/generic/pane.itk: Reverted.
+	
+1998-12-11  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Major changes to
+	support panes that are fixed (non-resizable). This allows
+ 	the panedwindow to be used as a more general purpose
+	container widget where individual parts may or may not be
+	resizable.
+	
+	* iwidgets3.0.0/generic/pane.itk (iwidgets::Pane): Added
+	-resizable option to support non-resizable panes.
+
+1998-12-08  Martin M. Hunt  <hunt@cygnus.com>
+
+	* iwidgets3.0.0/generic/panedwindow.itk: Major changes to 
+	the default look and resizing method to be more modern, more
+	windows-like, and work better when widgets are placed in childsites.
+

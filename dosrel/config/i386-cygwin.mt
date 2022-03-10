@@ -1,0 +1,2 @@
+DEMODIR=i386-cygwin32
+

@@ -1,0 +1,18 @@
+This is identical to the standard distribution of dhrystone, with the
+addition of configure/make support, and the following change to
+dhry_1.c that works around the mistaken declaration of times() as
+returning an int rather than clock_t:
+
+***************
+*** 45,54 ****
+  
+  #ifdef TIMES
+  struct tms      time_info;
++ #ifndef __STDC__
+  extern  int     times ();
+                  /* see library function "times" */
++ #endif
+  #define Too_Small_Time 120
+                  /* Measurements should last at least about 2 seconds */
+  #endif
+--- 45,52 ----

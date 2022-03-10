@@ -1,0 +1,42 @@
+1999-01-29  Brendan Kehoe  <brendan@cygnus.com>
+
+	* src/Makefile.in (LIBS): Add `-L../../libstdc++' so both normal
+	builds and builds that include libstdc++ will work.
+
+Mon Jan 11 14:33:34 1999  Dave Brolley  <brolley@cygnus.com>
+
+	* src/Makefile.in (LIBS): Add libstdc++.
+
+Fri Oct 16 15:52:52 1998  Dave Brolley <brolley@cygnus.com>
+
+	* Makefile.in (info): New Target
+	(install-info): New Target
+
+Mon Oct 12 11:59:00 1998  Benjamin Kosnik  <bkoz@rhino.cygnus.com>
+
+	* src/iterator.cc: Remove include of stream.h.
+
+Sun Oct 11 21:27:00 1998  Jeffrey A Law  (law@cygnus.com)
+
+	Tue Oct  6 16:18:10 1998  Kaveh R. Ghazi  <ghazi@caip.rutgers.edu>
+        * key-list.cc (output_keyword_blank_entries): Output
+        get_fill_default() in the blank entries of keywords as a trailing
+        list of initializers.
+
+        * options.cc: Add support for fill_default.
+
+        * options.h: Likewise.
+        
+        * options.icc: Likewise.
+
+        * version.cc: Update to indicate forked version.
+
+Sun Oct 11 21:24:49 1998  Jeffrey A Law  (law@cygnus.com)
+
+	* Makefile.in: Add and use FLAGS_TO_PASS
+
+
+
+
+
+

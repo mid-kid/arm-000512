@@ -1,0 +1,408 @@
+<sect1 id="using-utils"><title>Cygwin Utilities</title>
+
+<para>Cygwin comes with a number of command-line utilities that are
+used to manage the UNIX emulation portion of the Cygwin environment.
+While many of these reflect their UNIX counterparts, each was written
+specifically for Cygwin.</para>
+
+<sect2 id="cygcheck"><title>cygcheck</title>
+
+<screen>
+Usage: cygcheck [-s] [-v] [-r] [-h] [program ...]
+  -s = system information
+  -v = verbose output (indented) (for -s or programs)
+  -r = registry search (requires -s)
+  -h = give help about the info
+You must at least give either -s or a program name
+</screen>
+
+<para>The <command>cygcheck</command> program is a diagnostic utility
+that examines your system and reports the information that is
+significant to the proper operation of Cygwin programs.  It can give
+information about a specific program (or program) you are trying to
+run, general system information, or both.  If you list one or more
+programs on the command line, it will diagnose the runtime environment
+of that program or programs.  If you specify the <literal>-s</literal>
+option, it will give general system information.  If you specify
+<literal>-s</literal> and list one or more programs on the command line,
+it reports on both.</para>
+
+<para>The <command>cygcheck</command> program should be used to send
+information about your system to Cygnus for troubleshooting (if your
+support representative requests it).  When asked to run this command,
+include all the options plus any commands you are having trouble with,
+and save the output so that you can mail it to Cygnus, like
+this:</para>
+
+<screen>
+<prompt>C:\Cygnus&gt;</prompt> cygcheck -s -v -r -h &gt; tocygnus.txt
+</screen>
+
+<para>The <literal>-v</literal> option causes the output to be more
+verbose.  What this means is that additional information will be
+reported which is usually not interesting, such as the internal
+version numbers of DLLs, additional information about recursive DLL
+usage, and if a file in one directory in the PATH also occurs in other
+directories on the PATH.  </para>
+
+<para>The <literal>-r</literal> option causes
+<command>cygcheck</command> to search your registry for information
+that is relevent to Cygnus programs.  These registry entries are the
+ones that have "Cygnus" in the name.  If you are paranoid about
+privacy, you may remove information from this report, but please keep
+in mind that doing so makes it harder for Cygnus to diagnose your
+problems.</para>
+
+<para>The <literal>-h</literal> option prints additional helpful
+messages in the report, at the beginning of each section.  It also
+adds table column headings.  While this is useful information, it also
+adds some to the size of the report, so if you want a compact report
+or if you know what everything is already, just leave this out.</para>
+
+</sect2>
+
+<sect2 id="cygpath"><title>cygpath</title>
+
+<screen>
+Usage: cygpath [-p|--path] (-u|--unix)|(-w|--windows) filename
+       cygpath [-v|--version]
+  -u|--unix     print UNIX form of filename
+  -w|--windows  print Windows form of filename
+  -p|--path     filename argument is a path
+  -v|--version  print program version
+</screen>
+
+<para>The <command>cygpath</command> program is a utility that
+converts Windows native filenames to Cygwin POSIX-style pathnames and
+back.  It can be used when a Cygwin program needs to pass a file name
+to a native Windows program, or expects to get a file name from a
+native Windows program.  You may use the long or short option names
+interchangeably, even though only the short ones are described
+here.</para>
+
+<para>The <literal>-u</literal> and <literal>-w</literal> options
+indicate whether you want a conversion from Windows to UNIX (POSIX)
+format (<literal>-u</literal>) or a conversion from UNIX (POSIX) to
+Windows format (<literal>-w</literal>).  You must give exactly
+one of these.  To give neither or both is an error.</para>
+
+<para>The <literal>-p</literal> option means that you want to convert
+a path-style string rather than a single filename.  For example, the
+PATH environment variable is semicolon-delimited in Windows, but
+colon-delimited in UNIX.  By giving <literal>-p</literal> you are
+instructing <command>cygpath</command> to convert between these
+formats.</para>
+
+<example><title>Example cygpath usage</title>
+<screen>
+#!/bin/sh
+for i in `echo *.exe | sed 's/\.exe/cc/'`
+do
+  notepad `cygpath -w $i`
+done
+</screen>
+</example>
+
+</sect2>
+
+<sect2 id="kill"><title>kill</title>
+
+<screen>
+Usage: kill [-sigN] pid1 [pid2 ...]
+</screen>
+
+<para>The <command>kill</command> program allows you to send arbitrary
+signals to other Cygwin programs.  The usual purpose is to end a
+running program from some other window when ^C won't work, but you can
+also send program-specified signals such as SIGUSR1 to trigger actions
+within the program, like enabling debugging or re-opening log files.
+Each program defines the signals they understand.</para>
+
+<para>Note that the "pid" values are the Cygwin pids, not the Windows
+pids.  To get a list of running programs and their Cygwin pids, use
+the Cygwin <command>ps</command> program.</para>
+
+<para>To send a specific signal, use the
+<literal>-signN</literal> option, either
+with a signal number or a signal name (minus the "SIG" part), like
+these examples:</para>
+
+<example><title>Specifying signals with the kill command</title>
+<screen>
+<prompt>$</prompt> kill 123
+<prompt>$</prompt> kill -1 123
+<prompt>$</prompt> kill -HUP 123
+</screen>
+</example>
+
+<para>Here is a list of available signals, their numbers, and some
+commentary on them, from the file
+<literal>&lt;sys/signal.h&gt;</literal>, which should be considered
+the official source of this information.</para>
+
+<screen>
+SIGHUP       1    hangup
+SIGINT       2    interrupt
+SIGQUIT      3    quit
+SIGILL       4    illegal instruction (not reset when caught)
+SIGTRAP      5    trace trap (not reset when caught)
+SIGABRT      6    used by abort
+SIGEMT       7    EMT instruction
+SIGFPE       8    floating point exception
+SIGKILL      9    kill (cannot be caught or ignored)
+SIGBUS      10    bus error
+SIGSEGV     11    segmentation violation
+SIGSYS      12    bad argument to system call
+SIGPIPE     13    write on a pipe with no one to read it
+SIGALRM     14    alarm clock
+SIGTERM     15    software termination signal from kill
+SIGURG      16    urgent condition on IO channel
+SIGSTOP     17    sendable stop signal not from tty
+SIGTSTP     18    stop signal from tty
+SIGCONT     19    continue a stopped process
+SIGCHLD     20    to parent on child stop or exit
+SIGCLD      20    System V name for SIGCHLD
+SIGTTIN     21    to readers pgrp upon background tty read
+SIGTTOU     22    like TTIN for output if (tp-&gt;t_local&amp;LTOSTOP)
+SIGIO       23    input/output possible signal
+SIGPOLL     23    System V name for SIGIO
+SIGXCPU     24    exceeded CPU time limit
+SIGXFSZ     25    exceeded file size limit
+SIGVTALRM   26    virtual time alarm
+SIGPROF     27    profiling time alarm
+SIGWINCH    28    window changed
+SIGLOST     29    resource lost (eg, record-lock lost)
+SIGUSR1     30    user defined signal 1
+SIGUSR2     31    user defined signal 2
+</screen>
+
+</sect2>
+
+<sect2 id="mkgroup"><title>mkgroup</title>
+
+<screen>
+usage: mkgroup &lt;options&gt; [domain]
+This program prints group information to stdout
+Options:\n");
+    -l,--local           print pseudo group information if there is
+                         no domain
+    -d,--domain          print global group information from the domain
+                         specified (or from the current domain if there is
+                         no domain specified)
+    -?,--help            print this message
+</screen>
+
+<para>The <command>mkgroup</command> program can be used to help
+configure your Windows system to be more UNIX-like by creating an
+initial <filename>/etc/group</filename> substitute (some commands need this
+file) from your system information. It only works on NT.
+To initially set up your machine,
+you'd do something like this:</para>
+
+<example><title>Setting up the groups file</title>
+<screen>
+<prompt>$</prompt> mkdir /etc
+<prompt>$</prompt> mkgroup &gt; /etc/group
+</screen>
+</example>
+
+<para>Note that this information is static.  If you change the group
+information in your system, you'll need to regenerate the group file
+for it to have the new information.</para>
+
+<para>The <literal>-d</literal> and <literal>-l</literal> options
+allow you to specify where the information comes from, either the
+local machine or the default (or given) domain.</para>
+
+</sect2>
+
+<sect2 id="mkpasswd"><title>mkpasswd</title>
+
+<screen>
+Usage: mkpasswd [options] [domain]
+This program prints a /etc/passwd file to stdout
+Options are
+   -l,--local              print local accounts
+   -d,--domain             print domain accounts (from current domain
+                           if no domain specified
+   -g,--local-groups       print local group information too
+   -?,--help               displays this message
+This program does only work on Windows NT
+</screen>
+
+<para>The <command>mkpasswd</command> program can be used to help
+configure your Windows system to be more UNIX-like by creating an
+initial <filename>/etc/passwd</filename> substitute (some commands
+need this file) from your system information. It only works on NT.
+To initially set up your machine, you'd do something like this:</para>
+
+<example><title>Setting up the passwd file</title>
+<screen>
+<prompt>$</prompt> mkdir /etc
+<prompt>$</prompt> mkpasswd &gt; /etc/passwd
+</screen>
+</example>
+
+<para>Note that this information is static.  If you change the user
+information in your system, you'll need to regenerate the passwd file
+for it to have the new information.</para>
+
+<para>The <literal>-d</literal> and <literal>-l</literal> options
+allow you to specify where the information comes from, either the
+local machine or the default (or given) domain.</para>
+
+</sect2>
+
+<sect2 id="passwd"><title>passwd</title>
+
+<screen>
+Usage passwd [name]
+      passwd [-x max] [-n min] [-i inact] [-L len] 
+      passwd {-l|-u|-S} name
+  -x max   set max age of passwords
+  -n min   set min age of passwords
+  -i inact disables account after inact days of expiry
+  -L len   set min password length
+  -l       lock an account
+  -u       unlock an account
+  -S       show account information
+</screen>
+
+<para> <command>passwd</command> changes passwords for user accounts.
+A normal user may only change the password for their own account,
+the administrators may change the password for any account.
+<command>passwd</command> also changes account information, such as
+password expiry dates and intervals.</para>
+
+<para>Password Changes: The user is first prompted for their old password,
+if one is present.  This password is then encrypted and compared against
+the stored password.  The user has only one chance to enter the correct
+password.  The administrators are permitted to bypass this step so that
+forgotten passwords may be changed.</para>
+
+<para>The user is then prompted for a replacement password.
+<command>passwd</command> will prompt again and compare the second entry
+against the first.  Both entries are require to match in order for the
+password to be changed.</para>
+
+<para>After the password has been entered, password aging information
+is checked to see if the user is permitted to change their password
+at this time.  If not, <command>passwd</command> refuses to change the
+password and exits.</para>
+
+<para>Password expiry and length: The password aging information may be
+changed by the administrators with the <literal>-x</literal>, 
+<literal>-n</literal> and <literal>-i</literal> options.  The 
+<literal>-x</literal> option is used to set the maximum number of days
+a password remains valid.  After <emphasis>max</emphasis> days, the
+password is required to be changed.  The <literal>-n</literal> option is
+used to set the minimum number of days before a password may be changed.  
+The user will not be permitted to change the password until
+<emphasis>min</emphasis> days have elapsed.  The <literal>-i</literal>
+option is used to disable an account after the password has been expired
+for a number of days.  After a user account has had an expired password
+for <emphasis>inact</emphasis> days, the user may no longer sign on to
+the account. Allowed values for the above options are 0 to 999.  The
+<literal>-L</literal> option sets the minimum length of allowed passwords
+for users, which doesn't belong to the administrators group, to
+<emphasis>len</emphasis> characters.  Allowed values for the minimum
+password length are 0 to 14.  In any of the above cases, a value of 0
+means `no restrictions'.</para>
+
+<para>Account maintenance: User accounts may be locked and unlocked with the 
+<literal>-l</literal> and <literal>-u</literal> flags.  The 
+<literal>-l</literal> option disables an account.  The <literal>-u</literal>
+option re-enables an account.</para>
+
+<para>The account status may be given with the <literal>-S</literal>
+option.  The status information is self explanatory.</para>
+
+<para>Limitations: User's may not be able to change their password on
+some systems.</para>
+
+</sect2>
+
+<sect2 id="mount"><title>mount</title>
+
+<screen>
+Usage mount [-bf] &lt;dospath&gt; &lt;unixpath&gt;
+      mount --reset
+      mount
+  -b   text files are equivalent to binary files (newline = \n)
+  -f   force mount, don't warn about missing mount point directories
+To reset the mount table use: mount --reset
+</screen>
+
+<para>The <command>mount</command> program is used to map your drives
+and shares onto the simulated POSIX directory tree, much like as is
+done by the POSIX mount command.  This is very similar to the old DOS
+<command>join</command>, in that it makes your drive letters appear as
+subdirectories somewhere else.  In POSIX operating systems (like
+Linux(tm)) there is no concept of "drives" nor drive letters.  All
+absolute paths begin with a slash instead of "c:" and all file systems
+appear as subdirectories (for example, you might buy a new disk and
+make it be the <filename>/disk2</filename> directory).  This practice
+is simulated by Cygwin to assist in porting POSIX programs to
+Windows.</para>
+
+<para>Normally, you'd just give the DOS/Windows equivalent path and
+where you want it to show up in the simulated POSIX tree, like these
+examples:</para>
+
+<example><title>Mounting filesystems</title>
+<screen>
+<prompt>C:\Cygnus&gt;</prompt> mount c:\ /
+<prompt>C:\Cygnus&gt;</prompt> mount c:\Cygnus\98r2\bin /bin
+<prompt>C:\Cygnus&gt;</prompt> mount d:\ /usr/data
+<prompt>C:\Cygnus&gt;</prompt> mount e:\mystuff /mystuff
+
+<prompt>bash$</prompt> mount 'c:\' /
+</screen>
+</example>
+
+<para>If you just type <command>mount</command> with no parameters, it
+will display the current mount table for you.  Using
+<literal>--reset</literal> will reset the mount table to its default
+set of entries, which may include floppy and tape drives and
+such.</para>
+
+<para>Limitations: there is a hard-coded limit of 30 mount
+points.</para>
+
+</sect2>
+
+<sect2 id="ps"><title>ps</title>
+
+<screen>
+Usage ps [-aefl] [-u uid]
+  -f       show process uids, ppids
+  -l       show process uids, ppids, pgids, winpids
+  -u uid   list processes owned by uid
+  -a, -e   show processes of all users
+</screen>
+
+<para>The <command>ps</command> program gives the status of all the
+Cygwin processes running on the system (ps = "process status").  Due
+to the limitations of simulating a POSIX environment under Windows,
+there is little information to give.  The PID column is the process ID
+you need to give to the <command>kill</command> command.  The WINPID
+column is the process ID that's displayed by NT's Task Manager
+program.</para>
+
+</sect2>
+
+<sect2 id="umount"><title>umount</title>
+
+<screen>
+Usage: unmount &lt;path&gt;
+</screen>
+
+<para>The <command>unmount</command> program removes a mount from
+the system.  You may specify either the Windows path or the POSIX
+path.  See the <command>mount</command> program for information
+about the mount table.</para>
+
+</sect2>
+
+</sect1>
+

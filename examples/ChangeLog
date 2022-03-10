@@ -1,0 +1,72 @@
+
+Thu Mar 11 20:33:46 1999  Michael Snyder  (msnyder@cleaver.cygnus.com)
+
+	* overlays/d10vdata.ld: move overlay LMAs to reflect new 
+	d10v address map.  Include space for printf in .text segment.
+	* overlays/ovlymgr.c (D10VTranslate): new function, handle
+	updated d10v VMA/LMA map.  (ovly_copy): call D10VTranslate.
+	(all functions): replace all ints with short or long.
+	(novlys): force into .data section.
+	* foo.c (foox): force into its overlay section, so that 
+	linker option "msdata" does not move it elsewhere.
+	* bar.c (barx): baz.c (bazx): grbx.c (grbxx): ditto.
+	* ovlymgr.h: change prototypes of OverlayLoad/Unload.
+
+Wed Sep 30 13:15:16 1998    <cagney@amy.cygnus.com>
+
+	* overlay/d10vtext.ld: Data loaded at 0x00... not 0x02..., overlay
+ 	sections loaded at 0x12... and not 0x00.... Merge all .dataNN
+ 	sections into single .data section.
+
+Mon May  4 13:11:40 1998  Michael Meissner  <meissner@cygnus.com>
+
+	* dhrystone/dhry{.h,_1.c}: Only default to using times if this is
+	compiled on a unix system.  If not unix, nor TIME/TIMES is
+	defined, don't try to calculate dhrystones/second.
+
+Mon Jan 12 14:46:26 1998  Michael Snyder  (msnyder@cleaver.cygnus.com)
+
+	* overlay: add D10V support files, integrate with existing files.
+
+Wed Dec  3 12:50:22 1997  Doug Evans  <devans@canuck.cygnus.com>
+
+	* overlay/ovlymgr.c (FlushCache): New function.
+	(OverlayLoad): Call it.
+
+Fri Mar 28 18:32:12 1997  Michael Snyder  <msnyder@cleaver.cygnus.com>
+
+	* overlay: New directory, sample runtime overlay manager.
+	* configure.in: Configure overlay directory.
+	* README: Note the new overlay directory
+	* overlay/*: new files, sample runtime overlay manager.
+
+Sun Sep 29 14:22:15 1996  Michael Meissner  <meissner@tiktok.cygnus.com>
+
+	* dhrystone/dhry_1.c (main): If PASSES is defined, don't read from
+	standard input.
+
+Wed Sep 20 14:03:19 1995  Ian Lance Taylor  <ian@cygnus.com>
+
+	* Makefile.in (maintainer-clean): New synonym for realclean.
+	* dhrystone/Makefile.in (maintainer-clean): Likewise.
+
+Mon Feb 13 17:08:05 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* dhrystone: New directory, copy of the Dhrystone benchmark.
+	* configure.in: Configure dhrystone.
+	* Makefile.in: Remove useless definitions (exec_prefix, etc).
+	(SUBDIRS, FLAGS_TO_PASS): Define.
+	(examples, clean, distclean): Recurse into subdirs.
+	(subdir_do, Makefile): New actions.
+	* README: Document addition of dhrystone.
+
+Thu Sep  8 20:05:36 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* Makefile.in (distclean, realclean): Merge into one target.
+	Remove Makefile and config.status.
+
+Fri Aug  5 10:28:50 1994  Stan Shebs  (shebs@andros.cygnus.com)
+
+	Creation of the examples directory.
+	* Makefile.in, README, configure.in, hello.c, stanford.c, stu.c,
+	stu2.c, tiny.c: New files.
