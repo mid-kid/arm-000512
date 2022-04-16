@@ -1,0 +1,17 @@
+#
+# D30V assembler tests
+#
+if [istarget d30v-*-*] then {
+
+	run_dump_test "inst"
+	
+	run_dump_test "align"
+
+	run_dump_test "guard"
+
+	run_dump_test "reloc"
+
+	run_dump_test "opt"
+
+	run_dump_test "array"
+}

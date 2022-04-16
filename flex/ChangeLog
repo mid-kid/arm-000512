@@ -1,0 +1,325 @@
+Wed Oct  1 12:13:49 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* configure.in: Call AM_EXEEXT.
+	* Makefile.in (EXEEXT): New variable.
+	(FLEX): Set to flex$(EXEEXT).  Change various uses of $(FLEX) to
+	just use flex.
+	* aclocal.m4: New file, built with aclocal.
+	* configure: Rebuild.
+
+Mon Sep 22 15:18:10 1997  Angela Marie Thomas (angela@cygnus.com)
+
+	* Makefile.in: Install $(FLEX)++ with $(INSTALL_PROGRAM) if
+	ln fails so cygwin32 installs work correctly.
+
+Fri Jul 18 06:48:43 1997  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	* skel.c (skel): Use array delete for YY_STATE_BUF.
+
+Wed Jul  9 12:00:56 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* configure.in: Call AC_FUNC_ALLOCA.
+	* configure, conf.in: Rebuild.
+
+Thu Oct  3 15:32:21 1996  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (clean): move config.log and config.cache to distclean.
+
+Mon Jun 24 17:57:28 1996  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (bindir, libdir, includedir, mandir, infodir): Use
+	autoconf-set values.
+	* configure.in (AC_PREREQ): autoconf 2.5 or higher.
+	* configure: Rebuilt.
+
+Fri Mar  8 19:02:21 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* Makefile.in (distclean): Remove stamp-h.
+
+Thu Dec 14 16:03:29 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mac-flex.r: Fix copyright and version strings.
+
+Tue Nov  7 15:33:13 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-config.in: Don't forward-include flexdef.h, generate
+	config.h.
+	* mpw-make.sed: New file, sed commands that finish translating
+	the Unix makefile into MPW syntax.
+	* mpw-make.in: Remove.
+	* mac-flex.r: New file, resources for flex.
+
+Wed Jul  5 17:54:16 1995  Jason Molenda (crash@phydeaux.cygnus.com)
+
+	* Upgrade to flex-2.5.2.  Bring forward the changes I made
+	to 2.5.1.
+
+Sun Apr  9 15:15:12 1995  Jason Molenda (crash@phydeaux.cygnus.com)
+
+	* flex.skl: change check from ``#if __STDC__'' to ``#ifdef __STDC__''
+	when determining whether to use prototypes/const.
+
+	* initscan.c: modified similarly.
+
+Fri Apr  7 19:46:01 1995  Jason Molenda (crash@phydeaux.cygnus.com)
+
+	* configure.in: hardware $CC instead of calling AC_PROG_CC.
+	remove ALLOCA checks--this is handled in libiberty now.
+
+	* Makefile.in: many Cygnus local changes, some documented.
+
+	* main.c: add -Q[y|n] option + `version' strings to `Cygnus version'.
+
+	* flex.texi: s/^@example/@smallexample/
+                     s/^@end example/@end smallexample/
+	Add documentation for -Q[y|n].
+
+Fri Apr  7 16:11:09 1995  Jason Molenda  (crash@phydeaux.cygnus.com)
+
+	* Upgrade to flex-2.5.1.  Almost all files changed.
+
+Mon Mar 13 16:52:48 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-config.in: New file, config fragment for Mac MPW.
+	* mpw-make.in: New file, makefile fragment for Mac MPW.
+
+Fri Jul 22 14:23:51 1994  Bill Cox  (bill@rtl.cygnus.com)
+
+	* Makefile.in (check): Cygnus Local convention - check target
+	  should not force the rebuild of the executable.
+
+Thu Aug  4 14:21:49 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* NEWS, flex.skl, gen.c, initscan.c, nfa.c, skel.c, version.h:
+	Upgrade to flex-2.4.7.
+
+Mon Jul 11 07:30:48 1994  Bill Cox  (bill@cygnus.com)
+
+	* Makefile.in (FLEX): Fix typo in previous patch.
+
+Mon Jul 11 07:30:46 1994  Bill Cox  (bill@cygnus.com)
+
+	* Makefile.in (FLEX): If local executable exists, use it.
+	  Otherwise, use one from the current PATH.  Facilitates
+	  testing of an installed flex executable.
+
+Wed Jul  6 14:20:48 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	Upgraded to flex-2.4.6.  Most files changed.
+
+Sat Feb 26 07:07:20 1994  Bill Cox  (bill@rtl.cygnus.com)
+
+	* Makefile.in (skeltext.c): unnecessary 'g' in rule hangs 
+	  BSD/386 v1.0 sed till memory runs out.
+
+Thu Feb 10 11:32:50 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* Makefile.in: Make install-info depend on info.
+
+Thu Dec 16 15:03:35 1993  david d `zoo' zuhn  (zoo@andros.cygnus.com)
+
+	* flex.skel: don't declare "int free()" or "int read()"
+
+Tue Aug 24 16:54:14 1993  Stan Shebs  (shebs@rtl.cygnus.com)
+
+	* Makefile.in: Add mostlyclean/distclean/realclean targets.
+
+Thu Jun  3 01:40:00 1993  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* main.c: remove skelname definition
+
+	* flexdef.h: remove skelname references
+
+	* configure: rebuilt using new autoconf
+
+Wed Jun  2 16:14:04 1993  Bill Cox  (bill@rtl.cygnus.com)
+
+	* README: Deter Cygnus clients from 'make test', etc.
+	* gen.c: Remove useless macro calls and macro def.
+
+Wed Jun  2 12:24:27 1993  Bill Cox  (bill@rtl.cygnus.com)
+
+        Merge in patches from Vern Paxson for flex-2.3.9,
+	which build better line-number directives into the
+	output file, for better symbolic debugging.
+	* ChangeLog, flexdef.h, gen.c, main.c, misc.c
+	* .cvsignore: New file.
+
+Thu Apr 29 14:56:04 1993  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Makefile.in (FLAGS_TO_PASS): New variable.
+	(check): Use it.
+
+Mon Mar 22 23:58:11 1993  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: add installcheck target
+
+Wed Feb 24 18:17:40 1993  John Gilmore  (gnu@cacophony.cygnus.com)
+
+	Merge in patches from Vern Paxson for flex-2.3.8.
+
+	* Changes, Makefile.in, README, dfa.c, flex.skel, flexdoc.1,
+	gen.c, main.c, misc.c, parse.y, scan.l, sym.c, tblcmp.c:  Merge.
+
+Thu Feb 11 14:42:30 1993  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Makefile.in (skeltext.c): Build using sed rather than awk.
+	* skel.head, skel.tail: Used by new rule to build skeltext.c.
+	* mk-c-prog.awk: Removed; no longer used.
+
+Thu Dec 24 15:09:03 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: support dvi target
+
+Mon Nov 30 12:33:39 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* flexdef.h: don't use prototypes for system calls, since they may
+	conflict with system header files.
+
+Sun Nov 22 19:15:25 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* configure.in: check for tmpnam() and <string.h>
+
+	* main.c, flexdef.h: removed tests for USG, replace by the
+	appropriate feature test
+
+Tue Nov 17 21:09:54 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* misc.c: replace \a and \v character escape with ASCII value,
+	since some compilers don't handle \a and \v
+
+Tue Nov  3 17:40:59 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: removed old dummy check target
+
+Sun Oct 25 16:53:39 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: use a dependency to not always make flex.info
+
+Fri Oct 23 11:13:23 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* flex.skel: put in #line directives so that gdb can set
+	breakpoints by line number in the generated file.
+
+Mon Oct 19 08:27:34 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Makefile.in, mk-c-prog.awk: renamed make-c-prog.awk to
+	mk-c-prog.awk to avoid 14 character file name limit.
+
+Mon Sep  7 22:37:31 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: remove the archive before rebuilding it
+
+Mon Aug 31 02:23:45 1992  david d `zoo' zuhn  (zoo@cygnus.com)
+
+	* Makefile.in: delete FRESHMAKEINFO setting (not used anywhere)
+
+Wed Aug 19 14:31:31 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Makefile.in: always create installation directories.
+
+Wed Aug 12 01:46:09 1992  John Gilmore  (gnu@rtl.cygnus.com)
+
+	Incorporate the flex.skel file into the body of flex itself,
+	avoiding having a dangling file which must be found at runtime,
+	somewhere in the file system.
+
+	* Makefile.in, flexdef.h, main.c, misc.c: Remove all references to
+	skelfile, skelname, DEFAULT_SKELETON_FILE, etc.
+	* Makefile.in:  Add skeltext.c rule, using make-c-prog.awk.
+	(install, install-flex.skel):  Don't install flex.skel.
+	(clean):  Remove skeltext.c.
+	* flex.texinfo:  Remove doc for -S (set skel file name) option.
+	* flexdef.h:  Add skelopen declaration.  Define const to nothing
+	if not stdc.  Fix prototypes for all functions with no arguments.
+	* main.c (flexinit):  Call skelopen() to start skeleton output.
+	* make-c-prog.awk:  New file, converts flex.skel to skeltext.c.
+	It creates an array of char *'s, one for each line of the input file.
+	* misc.c (skelopen):  New function resets skeleton output.
+	(skelout):  Advance through vector of pointers, rather than file.
+	* flex.1:  Remove -S and flex.skel documentation.
+	
+Fri Aug 14 01:35:46 1992  david d `zoo' zuhn  (zoo@cygnus.com)
+
+	* Makefile.in: install ALL info files, not just *.info
+
+Mon Aug 10 17:46:50 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* all files: remove RCS identification strings
+
+Mon Aug  3 15:31:54 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: libdir is based on exec_prefix, not prefix
+
+Fri Aug 14 01:35:46 1992  david d `zoo' zuhn  (zoo@cygnus.com)
+
+	* Makefile.in: install ALL info files, not just *.info
+
+
+Mon Aug 10 17:46:50 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* all files: remove RCS identification strings
+
+	* Makefile.in: libdir is based on exec_prefix, not prefix
+
+Mon Aug 10 11:23:27 1992  Ian Lance Taylor  (ian@dumbest.cygnus.com)
+
+	* Makefile.in: always create installation directories.  Use
+	man1dir instead of mandir.
+
+Tue Jul  7 09:34:38 1992  david d `zoo' zuhn  (zoo@cygnus.com)
+
+	* flex.texinfo: shortened INFO-DIR-ENTRY
+ 
+	* Makefile.in: install the info files via a for loop
+
+Tue Jun 30 14:37:08 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: added -o to $(MAKEINFO) command
+
+Mon Jun 15 10:09:14 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: fix info targets now, since flex.texinfo is the
+	  only flex documentation
+	
+Thu May 14 17:21:54 1992  K. Richard Pixley  (rich@rtl.cygnus.com)
+
+	* Makefile.in: now works for sun make too.
+
+Tue May  5 12:07:51 1992  K. Richard Pixley  (rich@cygnus.com)
+
+	* configure, configure.in: remove test for gcc, link flex.skel
+	  into objdir.
+
+Sun May  3 18:25:38 1992  K. Richard Pixley  (rich@rtl.cygnus.com)
+
+	* configure, configure.in: updated to current autoconf.
+
+	* Makefile.in: add libiberty to pull in alloca.
+
+Mon Apr 20 21:19:12 1992  K. Richard Pixley  (rich@rtl.cygnus.com)
+
+	* Makefile.in: use bigtest as check.  Make it work.
+
+	* initscan.c: regenerate so that outputs can be diff'd.
+
+	* flex.skel, scan.l: remove rcsid so that outputs can be diff'd.
+
+	* Makefile.in: build "flex" exactly once.  Make "bootstrap" work.
+
+	* configure: generated from configure.in with fresh autoconf.
+
+	* Makefile.in: rework CFLAGS such that CFLAGS can be passed from
+	  the make command line.  Default CFLAGS to -g.
+
+Wed Feb 26 18:04:40 1992  K. Richard Pixley  (rich@cygnus.com)
+
+	* Makefile.in, configure.in: removed traces of namesubdir,
+	  -subdirs, $(subdir), $(unsubdir), some rcs triggers.  Forced
+	  copyrights to '92, changed some from Cygnus to FSF.
+
+Fri Dec 27 17:17:30 1991  K. Richard Pixley  (rich at cygnus.com)
+
+	* ChangeLog: fresh ChangeLog
+
+	* Makefile.in: now joins devo, at least limply.

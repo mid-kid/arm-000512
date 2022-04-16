@@ -1,0 +1,109 @@
+# Makefile for Cygwin utilities
+# Copyright 1996, 1997, 1998 Cygnus Solutions.
+
+# This file is part of Cygwin.
+
+# This software is a copyrighted work licensed under the terms of the
+# Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
+# details.
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+etcdir = $(exec_prefix)/etc
+program_transform_name = @program_transform_name@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+EXEEXT = @EXEEXT@
+EXEEXT_FOR_BUILD = @EXEEXT_FOR_BUILD@
+
+CC = @CC@
+
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+INCLUDES = -I$(srcdir)/.. -I$(srcdir)/../include
+
+ALL_CFLAGS = $(CFLAGS) $(INCLUDES)
+ALL_CXXFLAGS = $(CXXFLAGS) $(INCLUDES)
+
+# Passed in from ../Makefile.
+LDFLAGS:=$(EXE_LDFLAGS) ../libcygwin.a
+
+PROGS = mount$(EXEEXT) umount$(EXEEXT) ps$(EXEEXT) kill$(EXEEXT) \
+	mkpasswd$(EXEEXT) mkgroup$(EXEEXT) cygpath$(EXEEXT) cygcheck$(EXEEXT) \
+	passwd$(EXEEXT)
+#cygwin$(EXEEXT)
+
+WINSUP_DEPS = $(srcdir)/../winsup.h
+
+all: $(PROGS)
+
+mount$(EXEEXT): mount.cc $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/mount.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+umount$(EXEEXT): umount.cc $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/umount.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+ps$(EXEEXT): ps.cc $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/ps.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+kill$(EXEEXT): kill.cc  $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/kill.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+cygwin$(EXEEXT): cygwin.cc $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/cygwin.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+mkpasswd$(EXEEXT): mkpasswd.c $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/mkpasswd.c $(ALL_CXXFLAGS) $(LDFLAGS) -lnetapi32 -ladvapi32
+
+mkgroup$(EXEEXT): mkgroup.c $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/mkgroup.c $(ALL_CXXFLAGS) $(LDFLAGS) -lnetapi32 -ladvapi32
+
+cygpath$(EXEEXT): cygpath.cc $(WINSUP_DEFS)
+	$(CC) -o $@ $(srcdir)/cygpath.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+cygcheck$(EXEEXT): cygcheck.cc $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/cygcheck.cc $(ALL_CXXFLAGS) $(LDFLAGS)
+
+passwd$(EXEEXT): passwd.c $(WINSUP_DEPS)
+	$(CC) -o $@ $(srcdir)/passwd.c $(ALL_CXXFLAGS) $(LDFLAGS) -lnetapi32
+
+clean:
+	rm -f *.o $(PROGS)
+
+realclean: clean
+	rm -f  Makefile config.cache 
+
+install: all installdirs
+	for i in $(PROGS) ; do \
+	  n=`echo $$i | sed '$(program_transform_name)'`; \
+	  $(INSTALL_PROGRAM) $$i $(bindir)/$$n; \
+	done
+
+installdirs:
+	$(SHELL) $(srcdir)/../../mkinstalldirs $(bindir) $(etcdir)
+
+Makefile: Makefile.in $(srcdir)/configure.in config.status
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+.NOEXPORT:
+
+.SUFFIXES: .cc .c .o
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+.cc.o:
+	$(CC) -c $(ALL_CXXFLAGS) $<

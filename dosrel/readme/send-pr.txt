@@ -1,0 +1,30 @@
+To: bugs@cygnus.com
+Subject:
+From: 
+Reply-To: 
+X-send-pr-version: 3.2-95q1
+
+
+>Submitter-Id:  
+>Originator:    
+>Organization:
+        <organization of PR author (multiple lines)>
+>Confidential:  <[ yes | no ] (one line)>
+>Synopsis:      <synopsis of the problem (one line)>
+>Severity:      <[ non-critical | serious | critical ] (one line)>
+>Priority:      <[ low | medium | high ] (one line)>
+>Category:      <name of the product (one line)>
+>Class:         <[ sw-bug | doc-bug | change-request | support ] (one line)>
+>Release:       progressive-94q4
+>Environment:
+        <machine, os, target, libraries (multiple lines)>
+System: 
+Architecture: dos
+
+
+>Description:
+        <precise description of the problem (multiple lines)>
+>How-To-Repeat:
+        <code/input/activities to reproduce the problem (multiple lines)>
+>Fix:
+        <how to correct or work around the problem, if known (multiple lines)>

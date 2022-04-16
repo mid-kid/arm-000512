@@ -1,0 +1,28 @@
+# Script to build the demo directories for the H8/300 dos release.
+
+demodir=$1
+srcdir=$2
+
+mkdir $demodir/demo
+unix2dos hello.c $demodir/demo/hello.c
+unix2dos makefile $demodir/demo/makefile
+unix2dos flash.c $demodir/demo/flash.c
+unix2dos h8300.txt $demodir/demo/h8300.txt
+
+# copy in some extra files
+mkdir $demodir/src
+mkdir $demodir/src/sys
+mkdir $demodir/src/machine
+
+
+
+cp ../../../newlib/libc/sys/h8300hms/*.[csS] $demodir/src/sys
+cp ../../../newlib/libc/machine/h8300/*.[csS] $demodir/src/machine
+
+for i in $demodir/src/sys/* ; do
+	unix2dos $i $i
+done
+
+for i in $demodir/src/machine/* ; do
+	unix2dos $i $i
+done

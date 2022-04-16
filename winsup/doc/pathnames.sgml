@@ -1,0 +1,208 @@
+<sect1 id="using-pathnames"><title>File and path names</title>
+
+<sect2><title>Mapping between Win32 and POSIX Paths</title>
+
+<para>Cygwin supports both Win32- and POSIX-style paths, using either
+forward or back slashes as the directory delimiter.  UNC pathnames (starting
+with two slashes and a network name) are also supported.
+By default the POSIX root "/" points to the system partition but it can
+be relocated on any directory in the Windows file system.
+</para>
+
+<para>For historical reasons, base filenames such as "com1", "lpt1", "prn"
+or "aux" (to name a few) cannot be used in a Cygwin DOS or POSIX path, 
+even with an extension ("prn.txt").
+However the special names can be used as filename extensions ("file.aux").
+</para>
+
+<para>The mapping between Win32 pathnames and POSIX styles takes place
+in the "mount table".  Cygwin maps between Win32 and POSIX paths by
+finding the longest matching prefix in the mount table. </para>
+
+<para>The mount table is stored in in the Windows registry and can be
+accessed under "HKEY_CURRENT_USER/Software/Cygnus Solutions/CYGWIN.DLL
+setup/&lt;version&gt;/mounts" where &lt;version&gt; is the latest registry
+version associated with the Cygwin library.</para>
+
+<para>The mount table is displayed with <command>mount</command> and it is
+modified by <command>mount [-switch] Win32path POSIXpath</command>.
+The optional switch specifies a default file mode, a concept detailed in 
+the next section.</para>
+
+<para>The <command>mount </command> program is used to map drives
+and shares onto the POSIX directory tree, much like as is
+done by the POSIX mount utility.  This is very similar to the old DOS
+<command>join</command>, in that it makes your drive letters appear as
+subdirectories somewhere else.  In POSIX operating systems (such as
+Linux) there is no concept of "drives" nor drive letters.  All
+absolute paths begin with a slash instead of "c:" and all file systems
+appear as subdirectories (for example, you might buy a new disk and
+make it be the <filename>/disk2</filename> directory).  This practice
+is simulated by Cygwin to assist in porting POSIX programs to
+Windows.</para>
+
+<para>However you do not need to set up mounts for most devices in the
+POSIX <filename>/dev</filename> directory (like
+<literal>/dev/null</literal>) as these are simulated within Cygwin
+automatically.</para>
+
+<para>The following example demonstrates using the mount utility to
+mount the directory 
+<filename>C:\cygnus\cygwin-b20\H-i586-cygwin32\bin</filename>
+to "/bin" and the network directory 
+<filename>\\pollux\home\joe\data</filename> to <filename>/data</filename>.
+</para>
+<example>
+<title>Adding mount points</title>
+<screen>
+<prompt>C:\cygnus\&gt;</prompt> <userinput>ls /bin /data</userinput>
+ls: /bin: No such file or directory
+ls: /data: No such file or directory
+<prompt>C:\cygnus\&gt;</prompt> <userinput>mkdir /bin</userinput>
+<prompt>C:\cygnus\&gt;</prompt> <userinput>mkdir /data</userinput>
+<prompt>C:\cygnus\&gt;</prompt> <userinput>mount
+C:\cygnus\cygwin-b20\H-i586-cygwin32\bin /bin</userinput>
+<prompt>C:\cygnus\&gt;</prompt> <userinput>mount
+\\pollux\home\joe\data /data</userinput>
+<prompt>C:\cygnus\&gt;</prompt> <userinput>mount</userinput>
+Device           Directory           Type        Flags
+\\pollux\home\joe\data   /data       native      text!=binary 
+C:\cygnus\cygwin-b20\H-i586-cygwin32\bin   /bin   native   text!=binary
+D:               /d                  native      text!=binary
+\\.\tape1:       /dev/st1            native      text!=binary
+\\.\tape0:       /dev/st0            native      text!=binary
+\\.\b:           /dev/fd1            native      text!=binary
+\\.\a:           /dev/fd0            native      text!=binary
+C:               /                   native      text!=binary
+<prompt>C:\cygnus\&gt;</prompt> <userinput>ls /bin/sh</userinput>
+/bin/sh
+<prompt>C:\cygnus\&gt;</prompt>
+</screen>
+</example>
+
+<para> Examples in this section have not discussed the use of the
+<literal>-b</literal> and <literal>-t</literal> options.  They change the
+default mode for files found under the corresponding "mount point". This is
+covered fully in the next section. </para>
+
+<para>The previous example was shown in the DOS shell.
+In bash it is legal and convenient to use the forward "/" in the Win32 pathname
+of the mount command as the "\" is the shell escape. </para>
+
+<para>The <command>cygpath</command> program can be used to translate
+between Win32 and POSIX pathnames. </para>
+
+<para>The <literal>HOME</literal>, <literal>PATH</literal>, and
+<literal>LD_LIBRARY_PATH</literal> environment variables are
+automatically converted from Win32 format
+(e.g. <filename>C:\cygnus\cygwin-b20\H-i586-cygwin32\bin</filename>) to
+POSIX format (e.g., <filename>/bin</filename>) when a Cygwin process first
+starts.</para>
+
+</sect2>
+
+<sect2><title>Mount point types</title>
+
+<para>In the previous example the POSIX mount point was an existing empty
+directory, as in standard UNIX. If this is the case, or even if the mount
+point is a file, a symbolic link (pointing to anywhere), or a non-empty
+directory, you get the expected behavior. Files present in a mount point
+directory before the mount become invisible to Cygwin programs.
+</para>
+
+<para> It is sometimes desirable to mount to non-existent directory,
+for example to avoid cluttering the root directory with names
+such as
+<filename>a</filename>,<filename>b</filename>,<filename>c</filename>
+pointing to disks. 
+Although you will get a warning, most everything will work properly
+when you refer to the mount point explicitly.
+Strange things can happen however:</para>
+<para>If your current working directory is <filename>/dir</filename>, say, 
+ and <filename>/dir/mtpt</filename> is a mount point
+</para>
+<para>- the mount point will not show up in an
+<command>ls</command> or <command>echo *</command> command. </para>
+<para>- <command>find .</command> will not find <filename>mtpt</filename> 
+</para>
+<para>- you can see <filename>mtpt</filename> it with 
+<command>ls mtpt</command>, 
+except for directories mounted under / </para>
+<para>- you can <command>cd mtpt</command>, except for directories mounted directly under /</para>
+
+<para>Although you can mount to pathnames that do not start with "/",
+there is no way to make use of such mount points.</para>
+
+</sect2>
+
+<sect2><title>Where to mount</title>
+<para>Which set of mounts is right for a given Cygwin user depends
+largely on how closely you want to simulate a POSIX environment,
+whether you mix Windows and Cygwin programs, and how many drive
+letters you are using.  If you want to be very POSIX-like, you may
+want to do something like this:
+
+<example><title>POSIX-like mount setup</title>
+<screen>
+<prompt>C:\&gt;</prompt> <userinput>mount c:\Cygnus\98r2 /</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount c:\ /c</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount d:\ /d</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount e:\ /cdrom</userinput>
+</screen>
+</example>
+
+<para>However, if you mix Windows and Cygwin programs a lot, you might
+want to create an "identity" mapping, so that conversions between the
+two (see the cygpath command) can be eliminated:</para>
+
+<example><title>Identity mount setup</title>
+<screen>
+<prompt>C:\&gt;</prompt> <userinput>mount c:\ \</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount d:\foo /foo</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount d:\bar /bar</userinput>
+<prompt>C:\&gt;</prompt> <userinput>mount e:\grill /grill</userinput>
+</screen>
+</example>
+
+<para>You'd have to repeat this for all top-level subdirectories on
+all drives, but then you'd always have the top-level directories
+available as the same names in both systems.</para>
+
+</sect2>
+
+<sect2><title>The .exe extension</title> 
+
+<para> Executable program filenames end with .exe but the .exe need not be
+included in the command, so that traditional UNIX names can be used.</para>
+
+<para>As a side effect the <literal>stat("filename",..)</literal> function
+call returns information about <filename>filename.exe</filename> if
+<filename>filename.exe</filename> exists and <filename>filename</filename>
+does not.  In the same situation <command> ls filename</command> will really
+give information about <filename>filename.exe</filename> and the only way to
+distinguish between the two files is by examining their inodes, as
+demonstrated below. </para>
+<screen>
+<prompt>C:\Cygnus\&gt;</prompt> <userinput>ls * </userinput>
+a      a.exe     b.exe
+<prompt>C:\Cygnus\&gt;</prompt> <userinput>ls b b.exe</userinput>
+b      b.exe
+<prompt>C:\Cygnus\&gt;</prompt> <userinput>ls -i a a.exe</userinput>
+445885548 a       435996602 a.exe
+<prompt>C:\Cygnus\&gt;</prompt> <userinput>ls b b.exe</userinput>
+432961010 b       432961010 b.exe
+</screen>
+
+<para>The <command>gcc</command> compiler produces an executable named
+<filename>filename.exe</filename> when asked to produce
+<filename>filename</filename>. This allows many makefiles written
+for UNIX systems to work well under Cygwin.</para>
+
+<para>Unfortunately the <command>install</command> program does distinguish
+between <filename>filename</filename> and <filename>filename.exe</filename>
+and will fail when trying to install a non-existing
+<filename>filename</filename> even if <filename>filename.exe</filename>
+exists. </para>
+</sect2>
+
+</sect1>

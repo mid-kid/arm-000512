@@ -1,0 +1,483 @@
+# Makefile.in for Cygwin.
+# Copyright 1995, 1996, 1997, 1998, 1999 Cygnus Solutions.
+#
+# This file is part of Cygwin.
+#
+# This software is a copyrighted work licensed under the terms of the
+# Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
+# details.
+
+# This makefile requires GNU make.
+
+SHELL:= @SHELL@
+VPATH:= @srcdir@
+srcdir:= @srcdir@
+objdir:= .
+
+target_alias:=@target_alias@
+prefix:=@prefix@
+
+program_transform_name:= @program_transform_name@
+exec_prefix:= @exec_prefix@
+bindir:= @bindir@
+libdir:= @libdir@
+tooldir:= $(exec_prefix)/$(target_alias)
+datadir:= @datadir@
+infodir:= @infodir@
+includedir:= @includedir@
+
+INSTALL:= @INSTALL@
+INSTALL_DATA:= @INSTALL_DATA@
+INSTALL_PROGRAM:= @INSTALL_PROGRAM@
+
+#
+# --enable options from configure
+#
+DEBUGGING:=@DEBUGGING@
+MT_SAFE:=@MT_SAFE@
+STRACE_HHMMSS:=@STRACE_HHMMSS@
+THREAD_FAILSAFE:=@THREAD_FAILSAFE@
+USE_REGISTRY:=@USE_REGISTRY@
+
+CC:= @CC@
+# FIXME: Which is it, CC or CC_FOR_TARGET?
+CC_FOR_TARGET:= $(CC)
+CFLAGS:=@CFLAGS@
+CXXFLAGS:=@CXXFLAGS@
+CFLAGS_COMMON:= -Wall -Wwrite-strings # -finline-functions
+CFLAGS_CONFIG:=$(DEBUGGING) $(USE_REGISTRY) $(STRACE_HHMMSS) \
+		$(MT_SAFE) $(THREAD_FAILSAFE)
+
+updir:= $(dir $(srcdir))
+
+INCLUDES:=-I$(srcdir)/include -I$(srcdir) -I$(updir)newlib/libc/sys/cygwin -I$(updir)newlib/libc/include -I$(srcdir)/config/@CONFIG_DIR@ -nostdinc++
+
+ALL_CFLAGS:= $(CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_CONFIG) $(INCLUDES)
+ALL_CXXFLAGS:= $(CXXFLAGS) $(CFLAGS_COMMON) $(CFLAGS_CONFIG) $(INCLUDES)
+
+# For linking mount, etc. crt0.o isn't accessable in a fresh build.
+EXE_LDFLAGS:= @EXE_LDFLAGS@
+
+AR:=@AR@
+AR_FLAGS:=qv
+RANLIB:=@RANLIB@
+LD:=@LD@
+DLLTOOL:=@DLLTOOL@
+AS:=@AS@
+
+MAKEINFO:=makeinfo
+@SET_MAKE@
+TEXI2DVI:=texi2dvi
+TEXI2HTML:=texi2html
+
+DEP:=mkdep
+ifdef MT_SAFE
+MT_SAFE_HEADERS:=thread.h
+MT_SAFE_OBJECTS:=pthread.o thread.o
+endif
+
+# Subdirectories should either be built before or after the top
+# level directory depending on whether they produce stuff included
+# in the cygwin.dll (e.g. regexp) or whether they use libcygwin.a (e.g. utils)
+
+SUBDIRS_BEFORE:=regexp
+SUBDIRS_AFTER:=utils doc mingw
+
+FLAGS_TO_PASS:=\
+	AS="$(AS)" \
+	CC="$(CC)" \
+	CFLAGS="$(CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_CONFIG)" \
+	CXXFLAGS="$(CXXFLAGS) $(CFLAGS_COMMON) $(CFLAGS_CONFIG)" \
+	EXE_LDFLAGS="$(EXE_LDFLAGS)" \
+	AR="$(AR)" \
+	RANLIB="$(RANLIB)" \
+	LD="$(LD)" \
+	DLLTOOL="$(DLLTOOL)"
+
+# Parameters used in building the cygwin.dll.
+# We build as new-cygwin.dll and rename at install time to overcome
+# native rebuilding issues (we don't want the build tools to see a partially
+# built cygwin.dll and attempt to use it instead of the old one).
+
+DLL_NAME=cygwin1.dll
+LIB_NAME=libcygwin.a
+DEF_FILE=cygwin.def
+DLL_ENTRY=@DLL_ENTRY@
+
+# Link in libc and libm from newlib
+
+LIBC_A=../newlib/libc.a
+LIBM_A=../newlib/libm.a
+LIBGMON_A=libgmon.a
+GMON_START:=gcrt0.o
+
+# Some things want these from libc, but they have their own static
+# data which apps can get to, which is a pain in the dll, so we
+# include them directly into the library.
+
+LIBCOS=libccrt0.o libcmain.o getopt.o dll_entry.o dll_main.o
+
+# Build as many .a files as we have .def files.
+
+THEIR_LIBS=$(addprefix lib,$(addsuffix .a,$(basename $(notdir $(wildcard @srcdir@/sysdef/*.def)))))
+
+DOC=faq.txt faq.info readme.txt readme.info
+
+HTMLDOC=faq.html readme.html
+
+.PHONY: all
+all: new-$(DLL_NAME) $(LIBGMON_A) $(THEIR_LIBS) $(LIB_NAME) force
+	@$(MAKE) subdir_dobefore DO=$@ $(FLAGS_TO_PASS)
+	@$(MAKE) subdir_doafter DO=$@ $(FLAGS_TO_PASS)
+
+info: $(DOC)
+
+info-html: $(DOC) $(HTMLDOC)
+
+install-info: info
+	if [ -r readme.info ]; then \
+	  dir=. ; \
+	else \
+	  dir=$(srcdir) ; \
+	fi ; \
+	for i in `cd $$dir; echo *.info*` ; do \
+	  if [ -f $$dir/$$i ] ; then \
+	    $(INSTALL_DATA) $$dir/$$i $(infodir)/$$i ; \
+	  fi ; \
+	done
+
+subdir_dobefore: force
+	@for i in $(SUBDIRS_BEFORE); do \
+	   echo "Making $(DO) in $${i}..." ; \
+	   if [ -d ./$$i ] ; then \
+	     if (rootme=`pwd`/ ; export rootme ; \
+	       rootsrc=`cd $(srcdir); pwd`/ ; export rootsrc ; \
+	       cd ./$$i; \
+	       $(MAKE) $(FLAGS_TO_PASS) $(DO)) ; then true ; \
+	     else exit 1 ; fi ; \
+	   else true ; fi ; \
+	done
+
+subdir_doafter: force
+	@for i in $(SUBDIRS_AFTER); do \
+	   echo "Making $(DO) in $${i}..." ; \
+	   if [ -d ./$$i ] ; then \
+	     if (rootme=`pwd`/ ; export rootme ; \
+	       rootsrc=`cd $(srcdir); pwd`/ ; export rootsrc ; \
+	       cd ./$$i; \
+	       $(MAKE) $(FLAGS_TO_PASS) $(DO)) ; then true ; \
+	     else exit 1 ; fi ; \
+	   else true ; fi ; \
+	done
+
+force:
+
+# texi2html will not be installed at many sites so by default we don't
+# try to convert to html.
+
+faq.html: $(srcdir)/doc/faq.texinfo $(srcdir)/doc/*.texinfo
+	for i in $(srcdir)/doc/*.texinfo ; do \
+		sed < $$i -e 's?@file{\([fth]*p://[^}]*\)}?@strong{<A HREF="\1">\1</A>}?' \
+	    -e 's?\([.+a-zA-Z0-9-]*@@[.a-zA-Z0-9-]*[a-zA-Z0-9]\)?<A HREF="mailto:\1">\1</A>?' >./`basename $$i` ; done
+	-$(TEXI2HTML) -split_chapter  -v ./faq.texinfo
+	rm -f *.texinfo
+	cp faq_toc.html faq.html
+
+faq.txt: $(srcdir)/doc/faq.texinfo
+	$(MAKEINFO)  -I$(srcdir)/doc --no-split --no-headers $< -o - |\
+		sed '/^Concept Index/,$$d' > faq.txt
+
+faq.info: $(srcdir)/doc/faq.texinfo
+	$(MAKEINFO)  -I$(srcdir)/doc $<
+
+readme.html: $(srcdir)/doc/readme.texinfo
+	-$(TEXI2HTML) -I$(srcdir)/doc $<
+
+readme.txt: $(srcdir)/doc/readme.texinfo
+	$(MAKEINFO) -I$(srcdir)/doc --no-split --no-headers $< -o - |\
+		sed '/^Concept Index/,$$d' > readme.txt
+
+readme.info: $(srcdir)/doc/readme.texinfo
+	$(MAKEINFO) -I$(srcdir)/doc  $<
+
+install: $(THEIR_LIBS) $(LIB_NAME) new-$(DLL_NAME) $(GMON_START) $(LIBGMON_A) real-headers
+	for i in $(THEIR_LIBS) $(LIB_NAME) $(GMON_START) $(LIBGMON_A); do \
+		$(INSTALL_DATA) $$i $(tooldir)/lib/$$i ; \
+	done
+	for i in $(DLL_NAME); do \
+	  binname=`t='$(program_transform_name)'; echo "$$i" | sed -e $$t` ; \
+	  echo "program_transform_name=$(program_transform_name), i=$$i, binname=$$binname"; \
+	  rm -f $(bindir)/$$binname ; \
+	  $(INSTALL_DATA) new-$$i $(bindir)/$$binname ; \
+	done
+	for sub in include include/arpa include/asm include/Windows32 \
+	   include/cygwin include/net include/netinet include/sys ; do \
+		for i in $(srcdir)/$$sub/*.h ; do \
+		  $(INSTALL_DATA) $$i $(tooldir)/$$sub/`basename $$i` ; \
+		done ; \
+	done
+	@$(MAKE) subdir_dobefore DO=$@ $(FLAGS_TO_PASS)
+	@$(MAKE) subdir_doafter DO=$@ $(FLAGS_TO_PASS)
+
+	# this will only work if you've maked stmp_ms_include below.
+	#	if [ -e ms_include/windows.h ] ; then  \
+	#		for i in ms_include/*.h ; do \
+	#		  $(INSTALL_DATA) $$i $(tooldir)/include ; \
+	#		done ; \
+	#	fi
+
+.SUFFIXES: .y $(SUFFIXES) .cc .def .a
+
+libwinspool.a: sysdef/winspool.def
+	$(DLLTOOL) --as=$(AS) -k --dllname winspool.drv --output-lib libwinspool.a --def $<
+
+lib%.a: sysdef/%.def
+	$(DLLTOOL) --as=$(AS) -k --dllname $*.dll --output-lib lib$*.a --def $<
+
+.cc.o:
+	$(CC) -c -fno-rtti -fno-exceptions $(ALL_CXXFLAGS) -o $@ $<
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) -D__INSIDE_CYGWIN__ -o $@ $<
+
+# Pull in a fragment that defines EXTRA_DLL_OFILES.
+
+include $(srcdir)/config/@CONFIG_DIR@/makefrag
+
+EXTRA_OFILES=../libiberty/random.o ../libiberty/strsignal.o \
+	regexp/regexp.o regexp/regerror.o regexp/regsub.o
+
+LIBGCC:=${subst \,/,${shell $(CC_FOR_TARGET) -print-libgcc-file-name}}
+
+DLL_IMPORTS:=libkernel32.a libuser32.a libadvapi32.a libnetapi32.a
+
+DLL_OFILES:=$(EXTRA_DLL_OFILES) \
+	$(EXTRA_OFILES)		\
+	assert.o		\
+	dcrt0.o                 \
+	debug.o			\
+	delqueue.o		\
+	dir.o			\
+	dlfcn.o			\
+	dll_init.o		\
+	environ.o		\
+	errno.o			\
+	exceptions.o		\
+	exec.o			\
+	external.o		\
+	fcntl.o			\
+	fhandler.o		\
+	fhandler_console.o	\
+	fhandler_serial.o	\
+	fhandler_tty.o		\
+	fhandler_windows.o	\
+        fhandler_raw.o          \
+        fhandler_floppy.o       \
+        fhandler_tape.o         \
+	fork.o			\
+	glob.o			\
+	grp.o			\
+	heap.o			\
+	hinfo.o			\
+	init.o			\
+	ioctl.o			\
+	malloc.o		\
+	mmap.o                  \
+	net.o			\
+	ntea.o			\
+	passwd.o		\
+	path.o			\
+	pinfo.o			\
+	pipe.o			\
+	registry.o		\
+	resource.o		\
+	scandir.o		\
+	security.o		\
+	select.o		\
+	shared.o		\
+	signal.o		\
+	sigproc.o		\
+	smallprint.o		\
+	spawn.o			\
+	strace.o		\
+	strsep.o		\
+	syscalls.o		\
+	sysconf.o		\
+	syslog.o		\
+	termios.o		\
+	times.o			\
+	$(MT_SAFE_OBJECTS)	\
+	tty.o			\
+	uinfo.o			\
+	uname.o			\
+	wait.o			\
+	window.o
+
+GMON_OFILES:=			\
+	gmon.o			\
+	mcount.o		\
+	profil.o
+
+# Rules to build cygwin.dll
+
+$(LIB_NAME): $(DEF_FILE) $(LIBCOS)
+	$(DLLTOOL) --as=$(AS) --dllname $(DLL_NAME) --def $(DEF_FILE) --output-lib temp.a
+	$(AR) rcv temp.a $(LIBCOS)
+	mv temp.a $(LIB_NAME)
+
+LD_STUFF=--dll $(DLL_OFILES) version.o $(DLL_IMPORTS) $(LIBM_A) $(LIBC_A) $(LIBGCC) -e $(DLL_ENTRY) --image-base=0x61000000
+
+DLL_STUFF=--as=$(AS) --dllname $(DLL_NAME) --def $(DEF_FILE) --base-file cygwin.base --output-exp cygwin.exp
+
+old-$(DLL_NAME): $(DLL_OFILES) $(DEF_FILE) $(DLL_IMPORTS) $(LIBC_A) $(LIBM_A) Makefile version.o
+	$(LD) --base-file=cygwin.base -s -o /dev/null $(LD_STUFF)
+	$(DLLTOOL) $(DLL_STUFF)
+	$(LD) --base-file=cygwin.base cygwin.exp -s -o /dev/null $(LD_STUFF)
+	$(DLLTOOL) $(DLL_STUFF)
+	$(LD) cygwin.exp -o new-$(DLL_NAME) $(LD_STUFF)
+
+new-$(DLL_NAME): $(DLL_OFILES) $(DEF_FILE) $(DLL_IMPORTS) $(LIBC_A) $(LIBM_A) Makefile version.o
+	$(LD) -shared -o $@ -e $(DLL_ENTRY) cygwin.def $(DLL_OFILES) version.o $(DLL_IMPORTS) $(LIBM_A) $(LIBGCC) $(LIBC_A) $(LIBGCC)
+
+$(LIBGMON_A): $(GMON_OFILES) $(GMON_START)
+	$(AR) rcv $(LIBGMON_A) $(GMON_OFILES)
+
+version.cc: mkvers.sh include/cygwin/version.h $(DLL_OFILES)
+	@echo "Making version.cc";rm -f $@;\
+	$(SHELL) ${word 1,$^} ${word 2,$^} > $@
+
+glob/libglob.a: force
+	@$(MAKE) subdir_dobefore DO=all $(FLAGS_TO_PASS)
+
+clean:
+	-rm -f *.o *.dll *.a *.exp junk *.base version.cc regexp/*.o
+
+maintainer-clean realclean: clean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+	-rm -fr configure
+
+# cygwin.din is here because we need cygwin.def to be rebuilt if cygwin.din
+# changes, and it's the configure script that generates cygwin.def from
+# cygwin.din.
+
+Makefile: Makefile.in cygwin.din config.status configure
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+# Stuff to build headers for cygwin from the Microsoft WIN32SK headers.
+# If you don't have a Microsoft SDK, then you can rebuild the dll with
+# just the headers provided in include, but you may not be able to make
+# much more than that.
+#
+# If you do have a Microsoft SDK, set this name to point to the directory
+# which contains the headers (These rules were for a dual-boot linux
+# machine where C: is under /dosc).
+
+SDK_H=/dosc/mstools/h
+
+#msinclude:
+#	mkdir -p msinclude
+#	for i in $(MSSRC)/*.h ; do \
+#		tr -d "\r" <$$i >msinclude/`basename $$i`; done
+
+real-headers: # $(srcdir)/mspatches/*.patch
+	if [ -f $(SDK_H)/windows.h ] ; then	\
+		mkdir -p ms_include ;		\
+		for i in $(SDK_H)/*.h ; do	\
+			tr -d "\r" < $$i >ms_include/`basename $$i` ; \
+			if [ -e $(srcdir)/mspatches/`basename $$i.patch` ] ; then \
+				patch -d ms_include $$i <$(srcdir)/mspatches/`basename $$i`.patch ; \
+			fi ; \
+		done ; \
+	fi
+	touch real-headers
+
+make-diffs:
+	mkdir -p msorig
+	for i in $(SDK_H)/*.h ; do \
+		tr -d "\r" <$$i >msorig/`basename $$i`; done
+	for i in msorig/*.h ; do \
+		echo $$i ; \
+		diff  -e $$i ms_include/`basename $$i` >t ; \
+		if [ -s t ] ; then cp t $(srcdir)/mspatches/`basename $$i.patch` ; fi ; done
+
+# .h file dependencies
+# This may be overkill, but it's better than the previous situation.
+# As files/dependencies are added and removed from Cygwin, please keep
+# this list up to date.
+
+WINSUP_H:=winsup.h fhandler.h path.h shared.h \
+	  sigproc.h include/cygwin/version.h \
+	  $(MT_SAFE_HEADERS)
+
+assert.o: $(WINSUP_H)
+dcrt0.o: $(WINSUP_H) include/exceptions.h glob.h dll_init.h
+debug.o: $(WINSUP_H) debug.h
+delqueue.o: $(WINSUP_H)
+dir.o: $(WINSUP_H)
+dlfcn.o: $(WINSUP_H) dll_init.h
+dll_entry.o: $(WINSUP_H) include/cygwin/cygwin_dll.h
+dll_init.o: $(WINSUP_H) include/exceptions.h dll_init.h
+dll_main.o:
+environ.o: $(WINSUP_H)
+errno.o: $(WINSUP_H)
+exceptions.o: $(WINSUP_H) include/exceptions.h
+exec.o: $(WINSUP_H)
+external.o: $(WINSUP_H) external.h
+fcntl.o: $(WINSUP_H)
+fhandler.o: $(WINSUP_H)
+fhandler_console.o: $(WINSUP_H)
+fhandler_serial.o: $(WINSUP_H)
+fhandler_tty.o: $(WINSUP_H)
+fhandler_windows.o: $(WINSUP_H)
+fhandler_raw.o: $(WINSUP_H)
+fhandler_floppy.o: $(WINSUP_H)
+fhandler_tape.o: $(WINSUP_H)
+fork.o: $(WINSUP_H) dll_init.h
+glob.o: glob.h
+gmon.o: profil.h gmon.h
+grp.o: $(WINSUP_H)
+heap.o: $(WINSUP_H)
+hinfo.o: $(WINSUP_H)
+init.o: $(WINSUP_H)
+ioctl.o: $(WINSUP_H)
+libccrt0.o: $(WINSUP_H)
+libcmain.o: $(WINSUP_H)
+malloc.o: $(WINSUP_H)
+mcount.o: gmon.h
+mmap.o: $(WINSUP_H)
+net.o: $(WINSUP_H)
+ntea.o:
+passwd.o: $(WINSUP_H)
+path.o: $(WINSUP_H)
+pinfo.o: $(WINSUP_H)
+pipe.o: $(WINSUP_H)
+profile.o: profil.h
+pthread.o: $(WINSUP_H)
+registry.o: $(WINSUP_H)
+resource.o: $(WINSUP_H)
+scandir.o:
+security.o: $(WINSUP_H)
+select.o: $(WINSUP_H) select.h
+shared.o: $(WINSUP_H)
+signal.o: $(WINSUP_H)
+sigproc.o: $(WINSUP_H)
+smallprint.o: $(WINSUP_H)
+spawn.o: $(WINSUP_H)
+strace.o: $(WINSUP_H)
+strsep.o:
+syscalls.o: $(WINSUP_H)
+sysconf.o: $(WINSUP_H)
+syslog.o: $(WINSUP_H)
+termios.o: $(WINSUP_H)
+test.o: $(WINSUP_H)
+times.o: $(WINSUP_H)
+tty.o: $(WINSUP_H)
+uinfo.o: $(WINSUP_H)
+uname.o: $(WINSUP_H)
+wait.o: $(WINSUP_H)
+window.o: $(WINSUP_H)
+thread.o: $(WINSUP_H)

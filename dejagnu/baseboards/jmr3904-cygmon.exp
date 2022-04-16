@@ -1,0 +1,28 @@
+# Load the generic configuration for this board. This will define a
+# set of generic routines used by the tool to communicate with the
+# board.
+load_generic_config "cygmon";
+
+# board doesn't have FPU
+process_multilib_options "-msoft-float"
+
+set_board_info compiler  "[find_gcc]";
+set_board_info cflags  "[newlib_include_flags] [libgloss_include_flags]";
+set_board_info ldflags  "[libgloss_link_flags] [newlib_link_flags] [board_info $board addl_link_flags]";
+
+# And we use the jmr3904 linker script (for loading in the DRAM).
+set_board_info ldscript "-Tjmr3904app.ld"
+
+# Standard remote protocol.
+set_board_info gdb_protocol "remote";
+# We can't do input in GDB (yet! HA!). It *will* do output, hurrah.
+set_board_info gdb,noinferiorio 1;
+# Or pass arguments.
+set_board_info noargs 1;
+# Or do signals.
+set_board_info gdb,nosignals 1;
+
+set_board_info shell_prompt "cygmon>"
+
+
+set_board_info use_gdb_stub 1;

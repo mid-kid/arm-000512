@@ -1,0 +1,76 @@
+
+* How to talk to the H8/300 eval cards with GDB.
+
+
+Steps
+
+o	Make sure you've got the cable right.  You can test it out
+	by using the Windows terminal program (in the accessories folder)
+	to talk to the serial line connected to the H8/300 eval board.
+	It works at 9600 baud.
+
+o	Load the asynctsr program.  This is a TSR which handles the
+	communications with the eval board's serial port.  I use
+	a large default buffer size.  Symptoms of a small buffer
+	are frequent "GDB out of sync" messages.  Out of sync messages
+	are also a symptom of a flakey serial connection.
+
+o	Make sure the serial line baudrate is set right.
+
+
+
+Example
+	Start gdb and play, so after mucking with the cable and plugging
+	it into com2 on the PC:
+
+	asynctsr 2 20000	<- use com2 with a 20k serial buffer
+	mode com2:9600,n,8,1,p	<- makes sure were going at the right speed
+	gdb
+	(gdb) target hms com2	<- connect to the monitor
+	(gdn) info reg		<- dumps out the state of the registers.
+
+
+
+Note 	
+	The GDB "file" command resets the target, so each time you change
+	the file you've got to re-type "target hms com2"
+
+
+
+* How to download an srecord file
+
+Steps
+
+o	Make sure you've got one!  Generate srecords by using the
+	-oformat srec switch to the linker, or use objcopy -O srec.
+	Eg, from the example makefile:
+
+	ld -o flash.x -oformat srec ../lib/crt0.o flash.o	
+
+o	Use your favorite terminal program (eg, the one in Windows) to
+	talk to the eval board.  When you get the monitor prompt type:
+	
+	HMS> tl			<- tell it to download
+
+	Then copy the flash.x file to the eval board.  Under the Windows 
+	terminal program this can be done using Transfer menu and the Send Text File
+	option.
+
+	The monitor will print some dots, and then announce the range
+	of address it saw, so for the flash example you may see:
+
+	...........
+
+	Address Range: 8000 8040
+
+
+	Then start the program by typing
+
+	HMS> g 8000
+
+
+	You can speed all this up by putting the text "tl" and "g 8000" into
+	text files, then you can do all this from the command line like this:
+
+	copy file1+flash.x+file2 com2:
+

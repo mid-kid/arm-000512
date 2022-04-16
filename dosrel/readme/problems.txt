@@ -1,0 +1,92 @@
+To submit a Problem Report, you should fill out this template which is
+provided with your distribution (README\SEND-PR.TXT).  You will have to
+fill out a small number of fields in the template--type of problem,
+urgency, description of how to reproduce it, etc--and then e-mail, or
+fax it, to Cygnus Support.  You do NOT need to e-mail it from your PC;
+if you have Internet e-mail access on a UNIX workstation, you can just
+as easily send the form in from there.
+
+The form should be e-mailed to bugs@cygnus.com or faxed to +1 415 903 0122.
+At this time, we are not as efficient with faxed Problem Reports, please
+try to use e-mail if at all possible.
+
+When it gets to ``bugs@cygnus.com'', our Problem Report Management
+System (PRMS) will automatically assign it to the engineer best able to
+help you with whatever problem it may be.  The engineer will work with
+you via e-mail and all of the mail related to this Problem Report will
+be tracked by PRMS for future reference.  If the engineer does not
+reply to you after a certain time, a reminder is automatically
+generated.  If you need to talk to someone else in our organization
+about the problem (say the engineer dies), we can find out what the
+current state is by just the PR number.  Almost all real problems we
+handle here at Cygnus Support are dealt with through PRMS.
+
+There is a lot of documentation about PRMS in our supplied
+documentation set; please look in the ``Reporting Problems'' section
+(it has its own index tab and everything).
+
+Note that the ``Problem Report'' is not only for reporting problems,
+it can just as well be used for general questions about using the
+Cygnus Developer's Kit.  There is a Class: field which you can set
+to ``support'' instead of ``sw-bug''.
+
+Here is a list of the valid PR categories:
+
+bfd		binutils	bison		build		byacc
+config		cvs		dejagnu		diff		doc
+dos		emacs		flex		g++		gas
+gasp		gcc		gcov		gdb		gdb++
+glob		gnats		gprof		help-request	id-request
+info		info-request	install		kerberos	ld
+libc		libg++		libiberty	libm		make
+netware		newlib		other		patch		query-pr
+readline
+
+A filled out form from `Toasters Inc' would look like this:
+
+
+	To: bugs@cygnus.com
+	Subject: Linker not aligning text section correctly?
+	From: joe.smith@toasters.com
+	Reply-To: joe.smith@toasters.com
+	X-send-pr-version: 3.2-95q1
+
+	>Submitter-Id:	toastersinc
+	>Confidential:	yes
+	>Originator:	Joe Smith  (+1 415 903 1400)
+	>Organization:
+	-----
+	Joe Smith			joe.smith@toasters.com
+	Toasters, Inc.
+	         ``The best UI in the world''
+	
+	>Synopsis:	Linker not aligning text section correctly?
+	>Severity:	serious
+	>Priority:	high
+	>Category:	ld
+	>Class:		sw-bug
+	>Release:	progressive-95q1
+	>Environment:
+	dos x a29k-amd-udi.  DOS version 6.22, MS Windows 3.1, running
+	the tools in the DOS window under WIN.
+
+	System:		Compaq Pentium 90
+	Architecture:	dos
+
+	>Description:
+
+		(description of problem goes here)
+
+	>How-To-Repeat:
+
+		A code sample is worth a thousand words.
+		If the Problem Report is marked ``>Confidential: yes'',
+		it will not be available to anyone but our Cygnus engineers,
+		please contact us if you are concerned about sensitive source
+		code.
+
+	>Fix:
+
+		If you have already found a correct way to stop this problem,
+		please let us know!
+

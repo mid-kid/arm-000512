@@ -1,0 +1,54 @@
+Tue Dec  9 10:03:08 1997  Jeffrey A Law  (law@cygnus.com)
+
+	* Makefile.in (configure, config.hin): Don't run autoconf
+	or autoheader automatically.
+
+Wed Nov 19 18:08:05 1997  Geoffrey Noer  <noer@cygnus.com>
+
+        * Makefile.in: set SHELL to @SHELL@, define EXEEXT, pepper
+        throughout as appropriate
+        * aclocal.m4: rules to define EXEEXT
+        * configure.in: invoke AM_EXEEXT
+        * configure: regenerate
+
+Thu Sep  4 17:36:27 1997  Michael Meissner  <meissner@cygnus.com>
+
+	* patch.c (main): If PATCH_VERBOSITY starts with 'v' or 'V', set
+	verbosity to VERBOSE.  Similarly if it starts with 's' or 'S', set
+	verbosity to SILENT.
+
+Thu Sep  4 15:00:08 1997  Jeffrey A Law  (law@cygnus.com)
+
+	* Makefile.in (install-info): Add dummy target.
+
+Wed Sep  3 20:13:29 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* configure.in (LIBOBJS): Restore original FSF patch 2.5 code.
+	* configure: Regenerated.
+
+Wed Sep  3 19:26:53 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* getopt.c, getopt1.c, getopt.h, memchr.c, rename.c: Restore.
+	* Makefile.in: Remove references to libiberty.
+
+Tue Sep  2 19:43:04 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (check): Run sanity.sh.
+
+Tue Sep  2 19:22:11 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* memchr.c, rename.c: Removed.  Pick them up from libiberty instead.
+	* Makefile.in: remove references to memchr.c, rename.c, and the
+	getopt* files.
+
+	* configure.in (LIBOBJS): Don't add references to getopt.o and
+	getopt1.o.
+	* configure: Rebuilt.
+
+Tue Sep  2 17:23:14 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (COMPILE): Add $(srcdir)/../include to include dirs.
+
+Tue Sep  2 17:19:20 1997  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (LIBIBERTY): Link in libiberty if found.

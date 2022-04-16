@@ -1,0 +1,40 @@
+This directory contains a number of example programs that you may use
+as you like.  They are especially useful if you are an embedded programmer
+who is either using GNU tools for cross development for the first time,
+or is working with a new target platform.
+
+Feel free to modify these as necessary.  If some of your modifications
+address what seem like mistakes or limitations of these programs, we
+would like to hear about them.
+
+Note that the benchmark programs should be used with care.  Although
+they can provide some basic insights into performance, the numbers are
+probably NOT going to be an accurate indicator of either the compiler's
+or the processor's quality.
+
+tiny
+	This is a "smallest working program".  It is useful for doing
+	a sanity check on your compile/load/execute process.
+
+hello
+	The classic program.
+
+stu
+	This is a test program from master hacker Stu Grossman; it
+	includes various kinds of variables - static, local, strings,
+	and so forth.  Very useful for checking GDB and stub behavior!
+	
+	There is a second file stu2.c that is like stu.c, except with
+	the names changed.  This is to try out cross-file references.
+	An easy way to build is to say "gcc -g stu*.c".
+
+stanford
+	An integrated collection of common small benchmarks.  The
+	programs themselves are from all over; the integration was
+	done by John Hennessy and Peter Nye.
+
+dhrystone
+	The classic dhrystone program, Version 2.1.
+
+overlay
+	A sample runtime overlay manager, with example program to use it.

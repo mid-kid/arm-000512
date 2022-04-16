@@ -1,0 +1,806 @@
+
+Thu Jul  8 13:53:54 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* hinfo.cc (hinfo::init_std_file_from_handle): Make std output/input
+	track the CYGWIN=binmode setting.
+
+Sat May 22 19:03:47 1999  Mumit Khan  <khan@xraylith.wisc.edu>
+
+	* dll_init.cc (DllList::recordDll): Forkee must reload dlopened
+	DLLs. Also use strcasematch, not strcmp to compare file name.
+
+1999-05-28  DJ Delorie  <dj@cygnus.com>
+
+	* Makefile.in: use the "ld -shared" method to build the dll
+
+1999-05-29  Keith Seitz  <keiths@cygnus.com>
+
+        * errno.cc (errmap): Map ERROR_NEGATIVE_SEEK to EINVAL.
+
+Wed Mar  3 21:14:45 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler_serial.cc (fhandler_serial::tcflush): Use different
+	method for flushing since serial handles are now opened for
+	overlapped I/O.
+
+Wed Mar  3 21:14:45 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* select.cc (cygwin_select): Make degenerate case interruptible.
+
+Wed Mar  3 21:14:45 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* sigproc.cc (proc_exists): Recognize all kinds of myself pointers
+	as "existing".
+
+Wed Mar  3 21:14:45 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* environ.cc (environ_init): Fix off-by-one error in initial
+	environment allocation.
+
+Mon Feb 15 22:41:54 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (spawn_guts): Fix incorrect arg length when
+	constructing new arguments for #!.
+
+Mon Feb  8 17:29:58 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* include/Windows32/UnicodeFunctions.h: Fix incorrect use of
+	BOOL -> WINBOOL.
+	* Windows32/ASCIIFunctions.h: Ditto.
+
+Fri Feb 12 13:25:50 1999  Drew Moseley  <dmoseley@cygnus.com>
+
+	* Makefile.in (install-info): Test for file existence before installing.
+
+Mon Feb 22 19:00:00 1999  DJ Delorie  <dj@cygnus.com>
+
+	* doc/how.texinfo: quote ats
+
+1999-02-10  DJ Delorie  <dj@cygnus.com>
+
+	* doc/doctool.c (scan_directory): check for opendir failing,
+	add closedir.
+
+Fri Feb  5 09:38:25 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* path.cc (mount_info::add_item): Ensure that drive names
+	are added using X: notation.
+
+Thu Feb  4 00:28:58 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* path.cc (path_prefix_p_): Recognize ':' as a path separator.
+	(mount_info::conv_to_posix_path): Detect case where a '/' has
+	to be added to a path being constructed.
+	(realpath): Ensure that the full path name is returned.
+
+Wed Feb  3 22:57:42 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* shared.h (mount_info): Add two separate arrays to track
+	reverse sorting of win32/posix paths.
+	* path.cc (sort_by_posix_name): New function.  Sorts by
+	posix path.
+	(sort_by_native_name): Rename from sort_by_name.
+	(mount_info::conv_to_win32_path): Use native sort order
+	when iterating through mount table.
+	(mount_info::binary_win32_path_p): Ditto.
+	(mount_info::getmntent): Ditto.
+	(mount_info::conv_to_posix_path): Use posix sort order
+	when iterating through mount table.
+	(sort): Use two arrays to track sorting of mount table.
+	(mount_info::add_item): Simplify slightly.
+
+Wed Feb  3 15:17:54 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* cygwin.din: Remove DATA attribute which was erroneously
+	added to __errno.
+
+Tue Feb  2 23:10:18 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc: Fix comment regarding UNC paths in mount table.
+	(mount_info::conv_to_win32_path): Add back code to handle
+	//<drive> paths for now.  The plan is still to remove it again at
+	a later date.
+	(mount_info::slash_drive_to_win32_path): New.  Convert a //<drive>
+	path to a Win32 path.  Bring back from among the recently departed
+	path functions.
+	* shared.h: Add mount_info proto for slash_drive_to_win32_path.
+
+Tue Feb  2 22:52:43 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* include/lmaccess.h: Add stub.
+	* include/shlobj.h: Add stub.
+
+Tue Feb  2 22:34:06 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* shared.h: Change magic number associated with fork/exec
+	information as a temporary measure to eliminate strange
+	core dumps with multiple versions of cygwin1.dll.
+
+1999-02-02  Brendan Kehoe  <brendan@cygnus.com>
+
+	* Makefile.in (readme.txt): Add missing -I$(srcdir)/doc.
+
+Tue Feb  2 01:10:31 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* sysdef/*: Replace all files with new ones by Anders
+	Norlander <anorland@hem2.passagen.se>.  Please read sysdef/README
+	for more information.
+
+Mon Feb  1 14:55:11 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* path.cc (sort_by_name): Sort based on length of native_path
+	to ensure maximal match when converting from native -> UNIX.
+	* cygwin.din: Make more data variables DATA.
+
+Mon Feb  1 13:31:43 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* fhandler_tape.cc: Change all fhandler_tape private functions
+	to be named foo_bar_baz-style instead of FooBarBaz.  Add some
+	parens around logical ors/ands for clarity.  Respace.
+	* fhandler.h: Change protos here in light of above.
+
+Thu Jan 28 11:00:00  Corinna Vinschen  <corinna.vinschen@cityweb.de>
+
+	* errno.cc: Support for Windows errors ERROR_CRC and ERROR_NO_READY
+	and for error ENOMEDIUM.
+
+Wed Jan 27 01:05:39 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* dir.cc (rmdir): Correct errno setting when attempting to rmdir
+	a non-directory.
+
+Tue Jan 26 17:36:12 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* registry.cc (reg_key::build_reg): Add FIXME.
+
+Tue Jan 26 01:30:48 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc (mount_info::from_registry):  Import old v1 mounts
+	only if current mount layout doesn't exist yet in both user
+	and system areas (when had_to_create_mount_areas == 2).
+	(mount_info::import_v1_mounts): New, was upgrade_v1_mounts.
+	(mount_info::from_v1_registry): Add missing comma in reg_key
+	creation call.
+	(mount_info::init): Init had_to_create_mount_areas to zero.
+	* external.cc (cygwin_internal): Fix reference to
+	upgrade_v1_mounts.
+	* shared.h: Change upgrade_v1_mounts proto to import_v1_mounts.
+	Add new had_to_create_mount_areas variable in mount_info class.
+	* registry.cc (reg_key::build_reg): Increment
+	had_to_create_mount_areas whenever we create a new mount area.
+
+	* include/sys/mount.h: Don't define MOUNT_EXEC until we actually
+	implement this functionality.
+	
+	* utils/mount.cc (do_mount): Print warning messages after the
+	actual mount attempt so we don't see warnings when mount fails.
+	(usage): Change name of --upgrade-old-mounts flag to
+	--import-old-mounts.
+	(main): Ditto.
+
+Mon Jan 25 23:56:50 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* errno.cc (seterrno_from_win_error): New.  Given a Windows
+	error code, set errno accordingly.
+	(seterrno): Just call seterrno_from_win_error with the
+	error code returned by a call to GetLastError.
+	* winsup.h: Define __seterrno_from_win_error.
+	* path.cc: Clean up more function description comments.
+	(mount_info::add_reg_mount): Don't need res, just return the
+	right values.
+	(del_reg_mount): Return int, not void.  If we're deleting a
+	system mount, set errno to EACCES and return -1 if we don't
+	have a valid key handle.  If mount delete fails, set errno
+	accordingly and return -1.  Otherwise, return zero for success.
+	(cygwin_umount): Delete mount from registry first, only remove
+	from internal table if successful.
+	* shared.h: Make del_reg_mount proto return int.
+
+Mon Jan 25 22:40:15 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc (mount_info::mount_slash): Add mount to registry
+	first, only add to internal table if successful.
+	(mount_info::conv_to_posix_path): Ditto.
+	(mount): Ditto.
+	(mount_info::add_reg_mount): Return int, not void.  If we're
+	writing a system mount, first check if we have a valid key handle.
+	If we don't, set errno to EACCES and return -1.  Otherwise return
+	zero for success.
+	* shared.h: Make add_reg_mount proto return int.
+	
+Mon Jan 25 20:40:26 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc (mount_info::init): Don't read automount info here.
+	(mount_info::from_registry): Read it here instead.  Also, read
+	system registry info in KEY_READ mode.
+	(mount_info::read_mounts): Read mount info with KEY_READ access
+	permissions.
+
+Mon Jan 25 19:12:31 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc: Improve several function description comments.
+	(mount_info::init): Read automount information from the
+	registry before potentially automounting slash.
+	(mount_info::conv_to_posix_path): Create automount with
+	automount_flags flags.
+	(mount): Now flags is more than just a toggle so we
+	must check it in a different manner.  And simply check
+	MOUNT_AUTO as the indicator.  If we want to change the
+	automount_prefix, also change automount_flags as appropriate.
+	Fix args to syscall_printf.
+	(write_automount_info_to_registry): New.  Was
+	write_automount_prefix_to_registry.
+	(read_automount_info_from_registry): New.  Was
+	read_automount_prefix_from_registry.
+	* shared.h: Adjust protos for function renames just mentioned.
+	* include/sys/mount.h: Delete MOUNT_CHANGE_AUTOMOUNT_PREFIX
+	since we don't really need it.
+	* utils.cc (mount): Pass MOUNT_AUTO as indicator of desire to
+	change automount prefix.
+	(show_mounts): Change spacing so there's room for "system,auto"
+	in Type column.
+
+Mon Jan 25 13:17:40 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc: Change all references from "automount root" to
+	"automount prefix", avoiding potential nomenclature confusion
+	with the root of the file system.
+	(read_automount_prefix_from_registry): New.  Was
+	read_automount_root_from_registry.
+	(read_automount_prefix_from_registry): New.  Was
+	read_automount_root_from_registry.  Also read the default
+	flags for automounts from registry at the same time.
+	(write_automount_prefix_to_registry): New.  Was
+	write_automount_root_to_registry.  Also set automount flags
+	in registry using new auto_flags arg.
+	(mount): Add flags arg to write_automount_prefix_to_registry call.
+	* shared.h: Add automount_flags variable to mount_info class.
+	Adjust protos for function renames listed above.
+
+	* include/sys/mount.h: Comment out MOUNT_MIXED and MOUNT_SILENT
+	whose values could be reused now that we're using a new mount
+	layout.  Change MOUNT_CHANGE_AUTOROOT to
+	MOUNT_CHANGE_AUTOMOUNT_PREFIX.
+
+	* utils/mount.cc (change_automount_prefix): New.  Was
+	change_automount_root.  Add new flags argument so it's possible
+	to change the default automount flags.
+	(main): Option name change from --change-automount-root to
+	--change-automount-prefix.
+	(usage): Update in light of option changes.
+	* utils/umount.cc (remove_all_automounts): Also need to check
+	for mnt_type looking like "system,auto" now that it's possible
+	for automounts to be located in the system registry.
+
+Mon Jan 25 08:59:04 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (linebuf::add): Ensure that there is always
+	enough space for line being added.  Always null terminate.
+	(linebuf::prepend): Ditto.
+
+Sat Jan 23 01:30:16 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	Make mount.exe able to upgrade mounts:
+	* external.cc: Fix file description.
+	(cygwin_internal): Handle CW_READ_V1_MOUNT_TABLES case, in
+	which case call upgrade_v1_mounts to upgrade old registry
+	area mounts.
+	* external.h: Add CW_READ_V1_MOUNT_TABLES to enum.
+	* shared.h: Make upgrade_v1_mounts public.
+	
+	* utils/mount.cc: Include winsup.h, external.h, undef errno since
+	it's defined by winsup.h.
+	(usage): Add --upgrade-old-mounts option to usage info.
+	(main): Handle --upgrade-old-mounts flag by calling
+	cygwin_internal with the right constant.
+
+Sat Jan 23 00:40:17 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	First pass at mount table backwards compatibility with v1
+	mounts:
+	* path.cc (mount_info::from_registry): For now, upgrade from
+	old v1 mount registry area if nmounts==0 after reading new mount
+	areas.
+	(mount_info::read_v1_mounts): New function.  Given a regkey, read
+	the mounts in the old v1 registry layout corresponding to the key.
+	A "which" arg tells us which registry we're reading so that we
+	can include MOUNT_SYSTEM when reading old system mounts.
+	(mount_info::from_v1_registry): New function.  Retrieve old v1
+	mount table area mounts.
+	(mount_info::upgrade_v1_mounts): New function.  Retrieve old
+	v1 mounts, add them to the current registry mount location.
+	(mount_info::to_registry): New function.  For every mount in
+	the internal mount table, add it to the correct registry.
+	* shared.h: Add protos for new mount_info functions --
+	from_v1_registry, read_v1_mounts, upgrade_v1_mounts, to_registry.
+	Don't need class name in protos for
+	build_automount_mountpoint_path, write_automount_root_to_registry,
+	and read_automount_root_from_registry.
+
+Fri Jan 22 22:45:07 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (spawn_guts): Arg 2 missing from special case
+	command/cmd handling.
+
+Fri Jan 22 22:40:32 1998  Corinna Vinschen  <corinna.vinsche@cityweb.de>
+
+	* fhandler_raw.cc (fhandler_dev_raw::raw_read): bytes_to_read
+	corrected to multiple of 512 bytes instead of multiple to
+	devbufsiz.  Insert break on ReadFile returned 0 Bytes.
+
+Fri Jan 22 15:50:49 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* mkvers.sh: Fix handling of CVS tag output.
+	* errno.cc: Mark exported data as __declspec(dllexport).
+	* times.cc: Ditto.
+	* fhandler.cc (fhandler_base::open): Yet another stab
+	at correcting handling of binmode/textmode ramifications.
+	* path.cc (hash_path_name): Make /. == '' for purposes
+	of generating a hash.
+
+Fri Jan 22 11:45:28 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* path.cc (slash_unc_prefix_p): Generalize to allow
+	either type of slash.
+	(mount_info::add_item): Don't disallow UNC specs in
+	the mount table.
+	* utils/Makefile.in:  Always use current stub library.
+
+Fri Jan 22 08:52:36 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* environ.cc (regopt): Use correct registry key for Program
+	Options given new mount layout.
+	* cygwin.din: export __mb_cur_max from newlib.
+
+Thu Jan 21 16:52:20 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc (cygwin_split_path): Adjust two FIXMEs.
+	(mount_info::write_automount_root_to_registry): Return int,
+	0 on success, -1 if path is problematic.
+	(mount): Check return of write_automount_root_to_registry
+	and act appropriately.  Do syscall_printf when adjusting automount
+	as well as regular mount.
+	* shared.h: mount_info::write_automount_root_to_registry now
+	returns an int.
+	* utils/mount.cc (main): don't sanity-check automount path
+	here, instead let the DLL take care of that.
+
+Thu Jan 21 17:12:26 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (spawn_guts): Rewrite argument handling for
+	cleaner, one-pass operation.
+	(linebuf::add): New method for adding arguments to end
+	of the argument list.
+	(linebuf::prepend): New method for pushing arguments on
+	the front of the argument list.
+
+Wed Jan 20 19:06:30 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc (mount_info::mount_slash): only call add_reg_mount if
+	add_item succeeded.
+	(mount_info::add_item): Fail if native path doesn't start with
+	<drive letter>: or if posix path doesn't start with a slash.
+
+Wed Jan 20 19:06:30 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* fhandler_raw.cc: Correct copyright date, reformat.
+	* fhandler_floppy.cc: Ditto.
+	* fhandler_tape.cc: Ditto.
+
+Wed Jan 20 17:54:02 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	Remove //<drive>/ support.  Add support for automounts in
+	user registry area.
+	* path.cc: Rewrite, reformat docs at top in light of removing
+	//<drive>/ support and new automount support.  Add more function
+	description comments.
+	(slash_drive_prefix_p): Remove function.
+	(build_slash_drive_prefix): Ditto.
+	(slash_drive_to_win32_path): Ditto.
+	(mount_info::init): After everything else, read the automount_root
+	by calling read_automount_root_from_registry().
+	(mount_info::mount_slash): Automount slash with MOUNT_AUTO.
+	(mount_info::conv_to_win32_path): Remove //<drive>/ support code.
+	(mount_info::build_automount_mountpoint_path): Construct the name
+	of an automount POSIX path, given automount_root and the Win32
+	path that needs to be automounted.
+	(mount_info::conv_to_posix_path): Automount missing drive letter
+	and call conv_to_posix_path again if path isn't covered by the
+	mount table but starts with "<letter>:".
+	(mount_info::read_automount_root_from_registry): New function.
+	Read in the value of automount_root from the current_user
+	registry mount area.  If there isn't one, use default of
+	"/cygdrive" and write that to the registry by calling
+	write_automount_root_to_registry().
+	(write_automount_root_to_registry): Write a value of
+	automount_root to the user registry area.
+	(mount_info::del_item): Add new flags arg to specify which
+	registry to delete the mount from.
+	(mount_info::del_reg_mount): Ditto.
+	(mount_item::getmntent): Use mount_info mnt_foo strings to store
+	strings passed back in the mntent struct.  Otherwise if you
+	delete a mount item while using getmntent, the pointer may
+	change on the user.  Add ",auto" to mnt_type if	MOUNT_AUTO flag is
+	set.
+	(mount): Add support to set auto_root to path if flags is set
+	to the special MOUNT_CHANGE_AUTOROOT flag otherwise do the normal
+	thing.
+	(umount): Call cygwin_umount with flags value of 0.
+	(cygwin_umount): New exported function.  Same as umount but
+	takes an additional flag argument that specifies which registry
+	area from which umount should remove the mount point.
+	* cygwin.din: Export the cygwin_umount call.
+	* shared.h (mount_info): Add public automount_root string.
+	Add public proto for write_automount_root_to_registry().
+	Add private protos for build_automount_mountpoint_path() and
+	read_automount_root_from_registry().  Add flags arg to del_item
+	and del_reg_mount protos.  Add strings used by getmntent et al
+	including mnt_type, mnt_opts, mnt_fsname, mnt_dir.  (Can't just
+	pass back pointers to mount paths because they may change as
+	a result of a umount call.
+	
+	* include/sys/mount.h: Add new MOUNT_AUTO and
+	MOUNT_CHANGE_AUTOROOT flags.  Add proto for cygwin_umount
+	function.
+	* include/cygwin/version.h: Bump CYGWIN_VERSION_API_MINOR to 9.
+	
+	* utils/mount.cc: Change missing_dir_warning flag to force
+	and init to FALSE instead of TRUE.  Throughout swap names and
+	setting as appropriate.  Include errno.h.
+	(usage): Remove info about --reset.  Add info for new
+	--change-automount-root option.
+	(main): Don't check the --reset flag.  Call change_automount_root
+	if invoked with --change-automount-root.  Only call do_mount
+	if !mount_already_exists unless force flag is TRUE.  Otherwise
+	fail.
+	(mount_already_exists): New helper function.  Returns 1
+	if the mount point of the same registry location is already
+	mounted.
+	(reset_mounts): Remove function.
+	(change_automount_root): New function that changes the
+	automount root in the registry via Cygwin by passing the new
+	path to mount() with the special MOUNT_CHANGE_AUTOROOT flag.
+	* utils/umount.cc: Add progname, set to argv[0].  Include string.h.
+	(usage): New function to print out usage info.
+	(main): Loop through argcs.  Handle new flags to remove all mounts
+	of a specific type including --remove-all-mounts,
+	--remove-user-mounts, --remove-system-mounts, and
+	--remove-auto-mounts.  New flag to specify removing a system
+	mount.  Call cygwin_umount instead of umount, providing flags
+	as appropriate.
+	(remove_all_mounts): New function.  Remove all mounts in
+	both tables.
+	(remove_all_automounts): Remove all mounts marked auto.
+	(remove_all_user_mounts): Remove all user mounts, including auto
+	mounts.
+	(remove_all_system_mounts): Remove all system mounts.
+
+	* registry.cc (reg_key::get_string): Fix description comment.
+	* strace.cc: Minor reformatting.
+	
+Wed Jan 20 17:49:20 1999  DJ Delorie  <dj@cygnus.com>
+
+	* fhandler.cc (raw_write): Make sure that a disk full error
+	is properly signalled.
+	(fhandler_base::open): Only tapes are read/write, cd-roms may be
+	read-only (from Corinna).
+
+Wed Jan 20 10:46:48  Corinna Vinschen  <corinna.vinschen@cityweb.de>
+
+	[applied by DJ Delorie <dj@cygnus.com>]
+	
+	* fhandler_raw.cc (fhandler_dev_raw::writebuf): Writes only
+	as much bytes as needed, instead of full buffer size.
+
+	* fhandler_tape.cc (fhandler_dev_tape::close): Corrected error
+	handling in case of error while writing buffer content to dev.
+
+	* fhandler_floppy.cc (fhandler_dev_floppy::close): Ditto.
+
+	* fhandler_tape.cc (fhandler_dev_tape::writebuf): Delete function
+
+	* fhandler_floppy.cc (fhandler_dev_floppy::writebuf): Ditto.
+
+	Patch suggested by Ron Parker <rdparker@butlermfg.org>
+	* path.cc (mount_info::conv_to_win32_path): Changed the
+	recognition of UNC devices, to support also paths of type
+	`\\.\UNC\'.
+
+	* fhandler_tape.cc (fhandler_dev_tape::close): Fixed rewind
+	to block 1 instead of block 0 on rewind tapes in case of
+	uncaught signal (e.g. Ctrl-C).
+
+	* path.cc (get_raw_device_number): New static function,
+	checks path for windows raw device.
+
+	* path.cc (get_device_number): Changed for recognition of
+	windows raw device paths by calling `get_raw_device_number()'.
+
+	* path.h: Changed prototype for `get_device_number()'.
+
+	* Makefile.in: Added file 'fhandler_raw.o' to dependencies.
+
+	* include/cygwin/rdevio.h: New file to support ioctl commands
+	on random access raw devices. At the time only get/set buffersize
+	for raw_read/raw_write.
+
+	* fhandler.h: Changed class hierarchy. 'fhandler_dev_floppy'
+	and 'fhandler_dev_tape' are now derived classes of
+	'fhandler_dev_raw', which is derived from 'fhandler_base'.
+
+	* fhandler_raw.cc: New file for implementation of class
+	'fhandler_dev_raw' which is now base class for support of
+	mass storage raw devices.
+
+	* fhandler_dev_tape.cc: Rewritten.
+
+	* fhandler_dev_floppy.cc: Rewritten. Now supporting correct
+	lseek (seeking only to positions on 512 byte boundaries,
+	like supported from WinNT).
+
+	* Makefile.in: Added file 'fhandler_floppy.o' to dependencies.
+
+	* fhandler_floppy.cc: New file to support raw devices
+	including multi volume operations.
+
+	* fhandler.cc: Deleted 'fhandler_dev_floppy' implementation.
+
+	* fhandler.h: Extended class fhandler_dev_floppy.
+
+	* fhandler_tape.cc: Rewritten for correct support
+	of multi volume operations. Supports Setmarks now.
+	
+	* fhandler.h: Added private method `clear()' to class
+	fhandler_dev_tape.
+
+	* Makefile.in: Added file 'fhandler_tape.o' to dependencies.
+
+	* path.cc (mount_info::conv_to_win32_path): Changed the
+	recognition of UNC devices, to support devices, which
+	are not partitions, too.
+
+	* fhandler.h: Extended struct 'fhandler_dev_tape' for tape support.
+	Added method 'fstat' to fhandler_dev_floppy to get S_ISBLK().
+
+	* fhandler.cc (fhandler_base::open): In any case 'access_' has to
+	be GENERIC_READ | GENERIC_WRITE for tapes, to allow tape control.
+	No 'SetFilePointer' for tapes.
+
+	* fhandler_tape.cc: New file to support rewind (/dev/stX) and
+	norewind (/dev/nstX) tapes.  Supports ioctl() calls, described
+	in...
+
+	* include/sys/mtio.h, include/cygwin/mtio.h: New header files
+	for tape support.
+
+Sat Jan 16 21:59:36 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* registry.h: Delete; move contents into shared.h except for
+	posix_path_p() routine which disappears.
+	* {Makefile.in, environ.cc, net.cc, path.cc, registry.cc,
+	shared.cc}: No longer include registry.h.
+	* dcrt0.cc (dll_crt0_1): don't check posix_path_p()
+
+	* include/mntent.h (struct mntent): Drop const from strings.
+	* include/sys/mount.h: Change MOUNT_GLOBAL flag that nobody has
+	used yet to MOUNT_SYSTEM.  Add MOUNT_EXEC flag.
+	* include/cygwin/version.h: Bump CYGWIN_VERSION_MOUNT_REGISTRY to
+	2.  Change CYGWIN_INFO_CYGWIN_REGISTRY_NAME to "Cygwin".
+	Change CYGWIN_INFO_CYGWIN_MOUNT_REGISTRY_NAME to "mounts v2".
+	
+	* registry.cc (reg_key::reg_key): Default key doesn't end in
+	"mounts" any more.
+	(reg_key::kill): Return error code from RegDeleteKeyA.
+	* path.cc: Reformat, reorder functionality, add comments
+	throughout.
+	(mount_info::init): Automount slash if it's not already mounted.
+	(mount_info::mount_slash): New private helper function.
+	(mount_info::binary_win32_path_p): Check flags to determine
+	if mount is binary or not, not binary_p.
+	(mount_info::read_mounts): Remove unneeded access argument.  Use
+	RegEnumKeyEx to enumerate mount points in current registry
+	location where each key name returned is a posix_path mount
+	location.  Use a subkey reg_key to read the posix_path's
+	corresponding native_path and flags.
+	(mount_info::from_registry): Access HKEY_LOCAL_MACHINE registry
+	with full access privs (which will fail if not administrator).
+	Fix registry path used to initialize HKEY_LOCAL_MACHINE reg_key.
+	(mount_info::to_registry): Delete function.  Replaced by
+	add_reg_mount.
+	(mount_info::add_reg_mount): New function which adds a specified
+	mount point to the registry.
+	(mount_info::del_reg_mount): New function which deletes the
+	posix_path argument from the highest priority registry table it
+	can (first user, than system-wide).
+	(sort_by_name): If the two posix_paths are the same, then
+	differentiate between them looking at MOUNT_SYSTEM in their flags.
+	(mount_info::add_item): Also make sure that neither path is NULL.
+	Never claim mount point is busy: replace an existing posix_path
+	as long as it came from the same registry location.
+	(mount_info::del_item): Also make sure that neither path is NULL.
+	(mount_item::getmntent): Use mnt_type field to store user vs.
+	system registry location string.  Cast all strings to char *.
+	Handle flags instead of binary_p.  Change names of strings
+	returned in mnt_opts field.
+	(mount_item::init): Set flags, instead of dealing with binary_p
+	and silent_p.
+	(mount): Call add_reg_mount instead of to_registry.
+	(umount): Call del_reg_mount instead of to_registry.
+	(path_conv::path_conv): Remove reference to silent_p.
+	* path.h (path_conv): Remove silent_p.
+
+	* utils/mount.cc: Add -s to usage (was a commented-out -g).
+	Or in MOUNT_SYSTEM if -s flag given.  Add similar commented-out
+	support for future MOUNT_EXEC flag that will be added with -e.
+	(reset_mounts): Automount slash with zero for flags, not
+	MOUNT_SILENT which we no longer use for anything.
+	* utils/umount.cc: Also print out usage if the first argument
+	starts with a dash.
+	
+Fri Jan 15 11:27:51 1999  DJ Delorie  <dj@cygnus.com>
+
+	* strace.cc: add macros to protect against buffer overruns
+	(strace_printf): increase buffer from 6000 to 1000 to build devo
+	* include/sys/strace.h: allow -DNOSTRACE again
+
+Fri Jan 15 11:27:51 1999  DJ Delorie  <dj@cygnus.com>
+
+	* dcrt0.cc (alloc_stack): add 16384 to work around Win95 page
+	fault during builds
+	* fork.cc (fork): try various things to avoid page faults during
+	win95 builds.
+	
+Fri Jan 15 11:18:23 1999  DJ Delorie  <dj@cygnus.com>
+
+	* fhandler.cc (raw_write): check for disk full.
+
+Fri Jan 15 11:18:23 1999  DJ Delorie  <dj@cygnus.com>
+
+	* init.cc (dll_entry): if the DLL is being LoadLibrary'd,
+	initialize some things.
+	* heap.cc (_sbrk): detect uninitialized heap and initialize
+	* dcrt0.cc (user_data): initialize to something useful.
+	(do_global_ctors): make global for init.cc
+
+Thu Jan 14 02:16:44 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* dll_init.cc: Add missing FIXME in comment.
+	* fhandler_console: Ditto.
+
+Thu Jan 14 00:53:25 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (iscmd): New function.
+	(spawn_guts): Treat command /c and cmd /c as special
+	cases.  Don't quote arguments to these programs if
+	there are exactly three arguments.
+	* dcrt0.cc (dll_crt0_1): Initialize exceptions prior
+	to fork to allow forked processes to "dump core".
+	* errno.cc (seterrno): No need for this to be extern "C".
+	* winsup.h: Ditto.
+
+Wed Jan 13 19:06:08 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* registry.cc: Add comments corresponding to various reg_key
+	functions, minor reformatting.
+	(reg_key::reg_key): Delete already-commented-out function
+
+Wed Jan 13 15:41:34 1999  DJ Delorie  <dj@cygnus.com>
+
+	* errno.cc (_sys_errlist): Add "extern" to work around new gcc
+	restrictions.
+
+Mon Jan 11 14:56:27 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* spawn.cc (spawn_guts): Fix problem with #! and relative
+	directories.
+
+Mon Jan 11 09:00:29 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler_console.cc (fhandler_console::read1): Handle EOF as a
+	specific case.
+
+Sun Jan 10 23:44:22 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler.h: Define __fmode for convenience.  Use throughout.
+	* environ.cc (parse_options): Use O_TEXT when nobinmode.
+	* fhandler.cc (fhandler_base::open): Don't honor __fmode
+	when disk file.  Default to O_TEXT if no mode is specified.
+	(fhandler_base::fhandler_base): Don't honor __fmode when disk
+	file.  Otherwise default to O_BINARY.
+	* pipe.cc (make_pipe): Default to O_BINARY if no mode specified.
+
+Sat Jan  9 20:58:34 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* Makefile.in: Correct previously messed up patch.
+	* thread.h: Add back a needed include.
+	* sigproc.cc (sigproc_init): Work around problem with older
+	compilers.
+	* wait.cc (wait4): Ditto.
+	* winsup.h (per_thread_waitq): Ditto.
+	* include/Windows32/CommonFunctions.h: Temporary change to
+	work around problems with older compilers.
+
+Fri Jan  8 12:53:53 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* environ.cc (parse_options): Add "forkchunk" debug setting.
+	Takes a value which is used to limit the size of individual memory
+	copies in a fork.
+	* fork.cc (fork_copy): Rewrite slightly to allow copying of
+	individual chunks of memory rather than all in one gulp.
+	Controlled by chunksize global variable.
+
+Thu Jan  7 22:02:18 1999  Christopher Faylor <cgf@cygnus.com>
+
+	patch from Corinna Vinschen <corinna.vinschen@cityweb.de>:
+	* utils/passwd.c: New file.
+	* utils/Makefile.in: Add dependencies for passwd.
+	* syscalls.cc (chmod): Change permission checking in case
+	of readonly test.
+	(stat_dev): Change default permission bits to allow writing
+	for all users.
+	(chown): Retry LookupAccountName with username set to domain\\username,
+	if returned SID-Type is not SidTypeUser.
+
+
+Thu Jan  7 17:50:49 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler.cc (fhandler_base::set_name): Fix bug which
+	disallowed '%' in a file name.
+
+Thu Jan  7 00:21:41 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	* path.cc: Add comments.
+	* path.h: Correct file description comment.
+
+Tue Jan  5 16:07:15 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler_serial.cc (fhandler_serial::raw_read): Be more defensive
+	about not calling problematic functions when the overlapped I/O is
+	armed.  Reset the overlapped event prior to calling read or suffer
+	an "operation aborted".
+	* select.cc (peek_serial): Ditto.
+
+Mon Jan  4 15:16:22 1999  Geoffrey Noer  <noer@cygnus.com>
+
+	Eliminate warnings:
+	* utils/mount.cc (show_mounts): make format a const char *.
+	* utils/ps.cc (main): make literal strings const char *s.
+	* utils/cygpath.cc (long_options): cast literal strings to char *s.
+	(main):
+
+Sun Jan  3 20:46:12 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* select.cc (peek_console): Remove #if 0 around NT code workaround.
+
+Sat Jan  2 00:04:01 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* Makefile.in: Remove include directories made obsolete by
+	recent changes to mmap.cc.  Also remove libraries that appear
+	to be unnecessary for linking.
+	* mkvers.sh: Put contents of .snapshot-date, if available, into
+	the DLL.
+
+Fri Jan  1 22:44:49 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* fhandler.h (fhandler_serial): Add flag to track state of
+	overlapped serial I/O.  Add overlapped_setup method for common
+	setup of overlapped structure.
+	* fhandler_serial.cc (fhandler_serial::overlapped_setup): New
+	method.  Sets up the overlapped structure for overlapped serial I/O.
+	(fhandler_serial::raw_read): Use overlapped_armed flag to avoid
+	calling functions which perform overlapped operations if overlapped
+	I/O is in already progress.  This should only be the case if a
+	previous operation was interrupted or select has detected serial I/O.
+	(fhandler_serial::open): Use overlapped_setup.
+	(fhandler_serial::fixup_after_fork): Ditto.
+	(fhandler_serial::de_linearize): Ditto.
+	(fhandler_serial::dup): Ditto.
+	(fhandler_serial::tcsetattr): Fix typo which caused IGNPAR
+	to be ignored.
+	* hinfo.cc (hinfo::select_read): Set saw_error to zero explicitly
+	to avoid spurious reporting of select errors.
+	(hinfo::select_write): Ditto.
+	(hinfo::select_except): Ditto.
+	* select.cc (peek_serial): Use overlapped_armed to avoid calling
+	functions which perform overlapped operations if overlapped I/O
+	is already in progress.

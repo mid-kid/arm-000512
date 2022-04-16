@@ -1,0 +1,5 @@
+INSTALL=install-win32-tree
+INSTALL_TARGET=install-win32-tree
+INSTALL_HOST=I-NT
+INSTALL_CROSS=
+

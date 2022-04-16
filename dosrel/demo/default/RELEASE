@@ -1,0 +1,10 @@
+# Script to build the demo directories for the DEFAULT dos release.
+
+demodir=$1
+srcdir=$2
+
+mkdir $demodir
+unix2dos hello.c $demodir/demo/hello.c
+unix2dos makefile $demodir/demo/makefile
+
+

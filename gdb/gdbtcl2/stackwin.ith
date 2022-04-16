@@ -1,0 +1,33 @@
+#
+# StackWin
+# ----------------------------------------------------------------------
+# Implements stack window for gdb
+# ----------------------------------------------------------------------
+#   AUTHOR:  Martin M. Hunt <hunt@cygnus.com>
+#   Copyright (C) 1997, 1998 Cygnus Solutions
+#
+
+class StackWin {
+  inherit EmbeddedWin GDBWin
+
+  private {
+    variable maxwidth 40
+    variable Running 0
+    variable protect_me 0
+    method build_win {}
+    method cursor {glyph}
+    method change_frame {y}
+    method update {}
+    method busy {}
+    method no_inferior {}
+    method idle {}
+  }
+
+  public {
+    method reconfig {}
+    method constructor {args} 
+    method destructor {}
+  }
+
+}
+

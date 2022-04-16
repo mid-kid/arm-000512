@@ -1,0 +1,62 @@
+Fri Feb  5 10:12:14 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* configure.in: Add AC_CANONICAL_SYSTEM so we can figure
+	out where to install termcap.h
+	* Makefile.am: Install termcap.h in correct include area.
+	* configure: Regenerate.
+	* configure.in: Regenerate.
+
+Wed Feb  3 09:41:56 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* getcap.c:  Remove some missed uses of __P.
+
+Wed Jan 27 01:21:45 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* configure.in: Work around for problem testing for C compiler
+	when building a cross compiler for the first time.
+	* configure: Regenerate.
+
+Mon Jan 18 13:17:10 1999  Christopher Faylor <cgf@cygnus.com>
+
+	* termcap.h: Eliminate use of macros from sys/cdefs.h.
+	Use explicit prototypes and explicit checks for __cplusplus.
+
+Mon Nov 30 10:51:17 1998  Christopher Faylor <cgf@cygnus.com>
+
+	* termcap.c: Turn off xn@ in cygwin capability.
+
+Thu Nov 26 20:01:39 1998  Christopher Faylor <cgf@cygnus.com>
+
+	* termcap: Break out cygwin into a separate entry.
+	Turn off xn for cygwin terminal type.
+
+Sat Nov 21 15:37:18 1998  Christopher Faylor <cgf@cygnus.com>
+
+	* Makefile.am: termcap file should be installed in
+	$(prefix)/etc not /etc.
+	* Makefile.in: Regenerate.
+
+Thu Nov 19 14:45:24 1998  Geoffrey Noer  <noer@cygnus.com>
+
+	* termcap.c: check old preprocessor symbol for Cygwin for now.
+
+Wed Nov 18 17:47:19 1998  Christopher Faylor <cgf@cygnus.com>
+
+	* termcap: New file: termcap data file.
+
+Wed Nov 18 16:58:23 1998  Christopher Faylor <cgf@cygnus.com>
+
+	Import BSD libtermcap for use by Cygwin and readline.
+
+	* Makefile.am: New file.
+	* Makefile.in: New file.
+	* aclocal.m4: New file.
+	* configure: New file.
+	* configure.in: New file.
+	* getcap.c: New file, also adapted from BSD.
+	* pathnames.h: Adapt pathnames to be more like older UNIX.
+	* termcap.c: Modifications necessary for cygwin.  Also add
+	builtin table for "cygwin" or "linux" terminal types.
+	* termcap.h: Modifications necessary for cygwin.
+	* tgoto.c: Modifications necessary for cygwin.
+	* tospeed.c: Modifications necessary for cygwin.

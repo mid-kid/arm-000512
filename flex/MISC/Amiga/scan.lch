@@ -1,0 +1,23 @@
+Changes for SCAN.L by Andreas Scherer, January 19, 1995.
+
+@x l.33
+#include "parse.h"
+@y
+#include "parse.h"
+
+Char *ndlookup(char []);
+Char myesc(Char []);
+
+@z
+
+@x l.87
+	Char nmdef[MAXLINE], myesc();
+@y
+	Char nmdef[MAXLINE];
+@z
+
+
+@x l.332
+			Char *ndlookup();
+@y
+@z

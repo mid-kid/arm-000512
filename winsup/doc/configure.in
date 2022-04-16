@@ -1,0 +1,21 @@
+dnl Autoconf configure script for winsup/regexp
+dnl Copyright 1997 Cygnus Solutions.
+dnl
+dnl This file is part of Cygwin.
+dnl 
+dnl This software is a copyrighted work licensed under the terms of the
+dnl Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
+dnl details.
+
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.12)
+AC_INIT(cygwin-api.in.sgml)
+
+# Find the native compiler
+dnl AC_PROG_CC
+dnl AC_PROG_MAKE_SET
+
+AC_SUBST(build_exeext)
+
+AC_OUTPUT(Makefile)

@@ -1,0 +1,333 @@
+Mon Nov 30 11:02:22 1998  Christopher Faylor <cgf@cygnus.com>
+
+	* Makefile.in: Make `install' rely on `all'.
+
+Mon Oct 12 19:25:59 1998  Geoffrey Noer  <noer@cygnus.com>
+
+        * configure.in: call AC_EXEEXT instead of AM_EXEEXT, require 2.12
+        * configure: regenerate
+        * aclocal.m4: remove, no longer needed
+
+Tue Mar 24 16:05:17 1998  Stu Grossman  <grossman@bhuna.cygnus.co.uk>
+
+	* configure:  Regenerate with autoconf 2.12.1 to fix shell issues for
+	NT native builds.
+
+Tue Aug  5 21:59:32 1997  Rob Savoye  <rob@chinadoll.cygnus.com>
+
+	* aclocal.m4: Regenerated with aclocal.
+	* configure.in: Removed AM_CYGWIN32, as AM_EXEEXT calls it for
+	us now.
+	* configure: Regenerated.
+
+Mon Jul 28 17:21:54 1997  Rob Savoye  <rob@chinadoll.cygnus.com>
+
+	* aclocal.m4: Add CYGWIN and EXEEXT autoconf macros.
+        * configure.in: Use CYGWIN and EXEEXT autoconf macro to look for
+        win32 dependencies.
+        * configure: Regenerated with autoconf 2.12.
+        * Makefile.in: Add $(EXEEXT) to all executables.
+
+Mon Apr 21 11:29:55 1997  Doug Evans  <dje@canuck.cygnus.com>
+
+	* skeleton.c (yygrow): Use `__inline__' instead of `inline' so
+	the thing is compilable with -ansi.
+
+Thu Aug 15 19:36:46 1996  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-config.in, mpw-make.sed: New files, MPW configury.
+	* mpw-make.in: Remove, now obsolete.
+
+Fri Jul 19 16:21:19 1996  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	General code cleanup to avoid mega-warnings from sensitive compilers.
+	* closure.c (set_EFF, set_first_derives, closure,
+	finalize_closure): Declare as void.
+	(print_closure, print_EFF, print_first_derives) [DEBUG]: Likewise.
+	* error.c: Likewise for all fns.
+	* lalr.c: Likewise for all fns except map_goto, transpose,
+	digraph, and traverse.
+	(traverse, digraph): Add decls.
+	(lalr): Move function to the bottom.
+	(add_lookback_edge): Move above use in build_relations.
+	* lr0.c: Likewise for all fns except get_state and new_state.
+	(generate_states): Move below fns it uses.
+	* main.c (done, set_signals, usage, byacc_getargs,
+	create_file_names, open_files): Likewise.
+	* mkpar.c (find_final_state, unused_rules, remote_conflicts,
+	total_conflicts, defreds, free_action_row, free_parser): Likewise.
+	(make_parser): Likewise.  Move below fns it uses.
+	* output.c: Likewise for all fns except default_goto,
+	matching_vector, pack_vector, is_C_identifier, and
+	output_stored_text.
+	(output_actions, output): Move below fns they use.
+	(save_column): Move above goto_actions use of this.
+	* reader.c (cachec, get_line, skip_comment, copy_ident, copy_text,
+	copy_union, declare_tokens, declare_types, declare_start,
+	read_declarations, initialize_grammar, expand_items, expand_rules,
+	advance_to_start, start_rule, end_rule, insert_empty_rule,
+	add_symbol, copy_action, read_grammar, free_tags, pack_names,
+	check_symbols, pack_symbols, pack_grammar, print_grammar, reader):
+	Likewise.
+	(start_rule): Move above use by advance_to_start.
+	* skeleton.c (section): Likewise.
+	* symtab.c (create_symbol_table, free_symbol_table, free_symbols):
+	Likewise.
+	* verbose.c (verbose, log_unused, log_conflicts, print_state,
+	print_conflicts, print_core, print_nulls, print_actions,
+	print_shifts, print_reductions, print_gotos): Likewise.
+	(print_state, verbose): Move below fns they use.
+	(print_gotos, print_shifts, print_reductions): Put above print_actions.
+	* warshall.c (transitive_closure, reflexive_transitive_closure):
+	Likewise.
+
+Mon Jun 24 17:23:29 1996  Jason Molenda  (crash@godzilla.cygnus.co.jp)
+
+	* Makefile.in (bindir, libdir, datadir, mandir, infodir, includedir):
+	Use autoconf-set values.
+	(docdir): Removed.
+	* configure.in (AC_PREREQ): Autoconf 2.5 or higher.	
+	* configure: Rebuilt.
+
+Mon Dec 18 20:48:51 1995  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	* byacc/main.c (getargs): Renamed to byacc_getargs, to avoid
+	conflicts with the AIX4.1.3 shared libraries.
+	(main): Change call.
+
+Fri Dec 15 12:54:38 1995  Brendan Kehoe  <brendan@lisa.cygnus.com>
+
+	Increase speed of the parser, and reduce its size by inlining.
+	* skeleton.c (header): Move definitions of yymalloc, yyrealloc,
+	and yygrow up to here, so they can get inlined.
+	(yygrow) [__GNUC__]: If we compile with gcc, add `inline' to decl.
+	(yygrow): Note if we're equal to YYMAXSTACKSIZE.  Increment
+	yystacksize by (yystacksize+1)/2, not doubling every time.
+	(YYMAXDEPTH): Only define if it's not already set.
+	(YYSTACKSIZE, YYMAXDEPTH): Default to 500, not 10000.
+	(YYINITDEPTH): Deleted, instead use YYSTACKSIZE now.
+	(YYMAXSTACKSIZE): New define, to 10000.
+	(yylex): Add extern decl.
+	(yyparse): Move growth code from multiple places to one, just
+	above yyloop, adding yypush_lex (uses yylval) and yypush (uses
+	just yyval) labels.
+	(trailer): Use yypush goto instead of another copy of the growth code.
+
+Thu Dec 14 15:55:16 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-make.in: Supply program name and version when Rez'ing.
+	* mac-byacc.r: Add version resources.
+
+Wed Oct 25 12:15:13 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-make.in: Add PowerMac support to link action.
+	* mac-byacc.r: New file.
+
+Wed Oct 18 15:15:30 1995  Michael Meissner  <meissner@tiktok.cygnus.com>
+
+	* closure.c (set_EFF): Allocate an extra word of slop space, so
+	that set_first_derives won't walk off the end of allocated
+	memory.
+
+Wed Sep 20 12:59:43 1995  Ian Lance Taylor  <ian@cygnus.com>
+
+	* Makefile.in (maintainer-clean): Add synonym for realclean.
+
+Fri Jun 23 13:44:22 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-make.in (ALL_CFLAGS): Define, add definition for
+	RETSIGTYPE.
+
+Mon Jun 12 12:13:13 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* Makefile.in (distclean, realclean): Remove config.cache and
+	  config.log.
+
+Wed May 17 17:52:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* Makefile.in (Makefile): Added config.status to dependency list.
+	  (config.status): New target.
+
+Tue Apr 18 12:56:52 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* Makefile.in: Add @DEFS@ to MORE_CFLAGS.
+	* configure.in: Add AC_TYPE_SIGNAL check.
+	* configure: Regenerated.
+	* main.c (onintr): Use RETSIGTYPE for signal handler return type.
+
+	* Makefile.in, configure.in: Converted to use autoconf.
+	* configure: New file, generated with autoconf 2.3.
+	* config/{mh-irix4, mh-solaris, mh-sysv4}: Removed.
+
+Wed Mar  8 12:29:05 1995  Stan Shebs  <shebs@andros.cygnus.com>
+
+	* mpw-make.in: New file, makefile fragment for MPW.
+
+Wed Mar  1 13:28:31 1995  Michael Meissner  <meissner@tiktok.cygnus.com>
+
+	* main.c (onintr): Make signal hander void.
+
+Wed Sep 21 11:13:56 1994  Doug Evans  (dje@canuck.cygnus.com)
+
+	* skeleton.c (body): Move decl of getenv to global scope for c++.
+
+Tue May 10 22:14:58 1994  Doug Evans  (dje@cygnus.com)
+
+	* skeleton.c (header): Undo previous patch for yychar.
+
+Fri May  6 17:04:19 1994  Doug Evans  (dje@canuck.cygnus.com)
+
+	* skeleton.c (header): Delete yychar, yyssp, yyvsp.
+	(yyparse): New locals yychar, yyssp, yyvsp, yysse.
+	After yygrow, update (now locals) yyssp and yyvsp.
+	(yygrow): Delete update of yyssp, yyvsp.
+
+Wed May 04 05:30:29 1994  Doug Evans  (dje@canuck.cygnus.com)
+
+	* main.c (yaccversion): Increment.
+	* skeleton.c (yysccsid): Add "cygnus" to version string.
+	(banner): Include <stdlib.h> ifdef __cpluslus.
+	(header): Add YYINITDEPTH, delete YYMAXSTACKSIZE (bison	compatibility).
+	Fix conditional definition of YYSTACKSIZE,YYMAXDEPTH to be compatible
+	with latest byacc release.
+	(body): Initialize stack as YYINITDEPTH elements.
+	(trailer): Double stack size until it's YYMAXDEPTH elements.
+	Use yyerror for memory exhausted error messages.
+
+Wed Feb 23 10:53:56 1994  Ian Lance Taylor  (ian@cygnus.com)
+
+	* skeleton.c (banner): Fix YYPARAMS for traditional case.
+
+Tue Feb 22 18:28:08 1994  Jason Merrill  (jason@deneb.cygnus.com)
+
+	* skeleton.c: Support C++.
+	(banner): Add definitions of YYPARAMS, YYDEFUN, YYAND, and YYPTR.
+	(header): Use YYPTR and YYPARAMS in prototypes for yy*alloc.
+	(trailer): Use YYPTR, YYDEFUN and YYAND in definitions of yy*alloc.
+
+Tue Nov 16 13:28:39 1993  K. Richard Pixley  (rich@cygnus.com)
+
+	* main.c (yaccversion): arbitrarily give this byacc a version of
+	  +cygnus.27.
+
+Mon Nov  8 12:39:09 1993  Doug Evans  (dje@canuck.cygnus.com)
+
+	* skeleton.c (header): Nuke malloc,realloc,free decls.
+	(yygrow): Use printf for debugging messages.
+	(banner): Conditionally include <stdio.h> ifndef YYDONT_INCLUDE_STDIO.
+
+Tue Nov  2 13:17:12 1993  Doug Evans  (dje@rtl.cygnus.com)
+
+	* skeleton.c (header): Only declare free if __STDC__.
+
+Thu Oct 28 03:18:17 1993  Doug Evans  (dje@thepub.cygnus.com)
+
+	* skeleton.c (header): YYMAXSTACKSIZE: New macro, default 10000.
+	yyss,yyvs: Change from static arrays to malloc'd buffers.
+	yygrow,yymalloc,yyrealloc,malloc,realloc,free: Declare.
+	yyfree: New macro.
+	(body): malloc yyss, yyvs.  If stack full try growing it.
+	(trailer): yygrow,yymalloc,yyrealloc: New functions.
+
+Sat Oct  9 18:42:54 1993  david d `zoo' zuhn  (zoo@rtl.cygnus.com)
+
+	* configure.in: recognize mips*- instead of mips-
+
+Tue Aug 24 16:47:02 1993  Stan Shebs  (shebs@rtl.cygnus.com)
+
+	* Makefile.in: add mostlyclean/distclean/realclean.
+
+Mon Jun 14 12:16:17 1993  david d `zoo' zuhn  (zoo at rtl.cygnus.com)
+
+	* Makefile.in: remove parentdir support; update INSTALL definition
+
+Fri Mar 12 18:32:45 1993  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* configure.in: change *-sun-solaris to *-*-solaris2*
+
+Fri Feb  5 14:09:25 1993  Jim Wilson  (wilson@sphagnum.cygnus.com)
+
+	* Makefile.in (PROGRAM): Add CFLAGS to link step.
+
+Fri Jan  8 07:02:19 1993  Ken Raeburn  (raeburn@cygnus.com)
+
+	* skeleton.c (banner): Define YYCONST as "const" or nothing.
+	(body): yys points to YYCONST.
+
+	* output.c (output_rule_data, output_yydefred, goto_actions,
+	output_base, output_table, output_check, output_debug): Output
+	tables as YYCONST.
+
+Wed Jan  6 18:46:51 1993  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* main.c: add support for a -o flag, to be command line compatible
+	with bison, for most FSF programs that use a parser
+
+Thu Dec 31 11:08:25 1992  Fred Fish  (fnf@cygnus.com)
+
+	* config/mh-sysv4:  New config for SVR4.
+	* configure.in (*-*-sysv4):  Use config/mh-sysv4.
+	* output.c (output_debug):  Make yyname[] and yyrule[] static.
+	* skeleton.c (tables):  Comment out yyname and yyrule extern
+	declarations, like other FIXME's.
+	* skeleton.c (header):  Make yyssp, yyvsp, yyss, and yyvs all
+	static.
+
+Tue Dec 29 12:08:53 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Patches from Michael Tiemann:
+	* defs.h (bucket): added lineno field.
+	* symtab.c (make_bucket): initialize it.
+	* error.c (undefined_symbol_warning): accept and print line number
+	argument.
+	* reader.c (check_symbols): pass line number to
+	undefined_symbol_warning.
+
+Thu Dec 17 19:40:47 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* Makefile.in: added blank 'dvi' target for standards.texi
+
+Thu Oct  1 23:50:56 1992  david d `zoo' zuhn  (zoo at cirdan.cygnus.com)
+
+	* configure.in: use cpu-vendor-os triple instead of nested cases
+
+Tue Aug 18 14:00:52 1992  Ian Lance Taylor  (ian@cygnus.com)
+
+	* Makefile.in: removed setting of CFLAGS and changed to always
+	create installation directories.
+
+Sun May 31 15:06:21 1992  Mark Eichin  (eichin at cygnus.com)
+
+	* configure.in, config/mh-solaris2: add support for solaris2 host.
+
+Tue Mar 24 16:02:26 1992  K. Richard Pixley  (rich@cygnus.com)
+
+	* configure.in, config/mh-irix4: add support for irix4 hosting.
+
+Wed Feb 26 18:04:40 1992  K. Richard Pixley  (rich@cygnus.com)
+
+	* Makefile.in, configure.in: removed traces of namesubdir,
+	  -subdirs, $(subdir), $(unsubdir), some rcs triggers.  Forced
+	  copyrights to '92, changed some from Cygnus to FSF.
+
+Tue Dec 10 04:14:12 1991  K. Richard Pixley  (rich at rtl.cygnus.com)
+
+	* Makefile.in: infodir belongs in datadir.
+
+Fri Dec  6 23:09:17 1991  K. Richard Pixley  (rich at rtl.cygnus.com)
+
+	* output.c, skeleton.c: make some things static that otherwise
+	  collide when linking two parsers into the same program.
+
+	* ChangeLog: fresh.
+
+	* Makefile.in: correct syntax error in ls target.  install using
+	  INSTALL_DATA and INSTALL_PROGRAM.  added host/target/site
+	  makefile inclusion hook.
+
+Thu Dec  5 22:46:44 1991  K. Richard Pixley  (rich at rtl.cygnus.com)
+
+	* Makefile.in: idestdir and ddestdir go away.  Added copyrights
+	  and shift gpl to v2.  Added ChangeLog if it didn't exist. docdir
+	  and mandir now keyed off datadir by default.
+

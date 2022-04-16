@@ -1,0 +1,24 @@
+# Script to build the demo directories for the AMD dos release.
+
+demodir=$1
+srcdir=$2
+
+mkdir $demodir
+unix2dos hello.c $demodir/demo/hello.c
+unix2dos makefile $demodir/demo/makefile
+
+# copy in some extra files
+mkdir $demodir/src
+mkdir $demodir/src/sys
+mkdir $demodir/src/sys/include
+
+cp ../../../newlib/libc/sys/a29khif/*.[csS] $demodir/src/sys
+cp ../../../newlib/libc/sys/a29khif/sys/*.h $demodir/src/sys/include
+
+for i in $demodir/src/sys/*.[csS] ; do
+	unix2dos $i $i
+done
+
+for i in $demodir/src/sys/include/*.h ; do
+	unix2dos $i $i
+done

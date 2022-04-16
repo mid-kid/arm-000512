@@ -1,0 +1,81 @@
+class ManagedWin {
+  inherit itk::Widget
+  
+  public {
+    method reconfig {}
+    method destroy_toplevel {}
+    method enable {on}
+    method reveal {}
+    method window_name {wname, {iname ""}}
+
+    variable nosize 0
+    
+    proc find {win}
+    proc open {args}
+    proc init {}
+    proc restart {}
+  }
+
+  protected {
+    proc dont_remember_size {} {
+      return 0
+    }
+    method freeze_me {}
+    method thaw_me {}
+
+    variable Top
+  }
+
+  private {
+    proc _create {args}
+
+  }
+
+  protected {
+    # manage_active - list of active window objects 
+    common manage_active ""
+
+    # this is the counter of TopLevelWins open
+    # when it hits 0, exit.
+    common numTopWins 0
+
+    common screenwidth
+    common screenheight
+  }
+
+  constructor {args} {
+    debug "$this args=$args"
+    lappend manage_active $this
+    set Top [winfo toplevel $itk_interior]
+    
+  }
+
+  destructor {
+
+    set infoList [after info]
+
+    # remove object from list
+    set i [lsearch -exact $manage_active $this]
+    if {$i != -1} {
+      set manage_active [lreplace $manage_active $i $i]
+    }
+
+    # save geometry
+    set g [wm geometry [winfo toplevel [namespace tail $this]]]
+    pref setd gdb/geometry/[namespace tail $this] $g
+
+    # If no toplevels remain, quit.
+    if {!$numTopWins} {
+      # save window positions of remaining windows
+      foreach obj $manage_active {
+	set g [wm geometry [winfo toplevel [namespace tail $obj]]]
+	pref setd gdb/geometry/[namespace tail $obj] $g
+      }
+      pref_save
+      gdb_force_quit
+    } else {
+      destroy_toplevel
+    }
+ }
+
+}

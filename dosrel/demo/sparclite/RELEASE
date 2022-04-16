@@ -1,0 +1,32 @@
+set -x
+# Script to build the demo directories for the generic m68k dos releases.
+
+demodir=$1
+srcdir=$2
+
+mkdir $demodir
+cp hello.c $demodir/demo/hello.c
+cp makefile $demodir/demo/makefile
+unix2dos $demodir/demo/hello.c $demodir/demo/hello.c
+unix2dos $demodir/demo/makefile $demodir/demo/makefile
+
+# copy in some extra files
+mkdir $demodir/src
+mkdir $demodir/src/sys
+mkdir $demodir/src/sys/include
+
+cp $srcdir/../../../libgloss/ex93x/*.[csS] $demodir/src/sys
+cp $srcdir/../../../libgloss/ex93x/*.h $demodir/src/sys/include
+
+cp $srcdir/../../../gdb/sparcl-stub.c $demodir/src/sys
+cp $srcdir/../../../gdb/sparclite/crt0.s $demodir/src/sys
+cp $srcdir/../../../gdb/sparclite/salib.c $demodir/src/sys
+cp $srcdir/../../../gdb/sparclite/sparclite.h $demodir/src/sys/include
+
+for i in $demodir/src/sys/*.[csS] ; do
+	unix2dos $i $i
+done
+
+for i in $demodir/src/sys/include/*.h ; do
+	unix2dos $i $i
+done

@@ -1,0 +1,73 @@
+# Makefile for winsup/regexp
+# Copyright (c) 1997, 1998 Cygnus Solutions.
+
+# This file is part of Cygwin.
+
+# This software is a copyrighted work licensed under the terms of the
+# Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
+# details.
+
+SHELL = @SHELL@
+srcdir = @srcdir@
+VPATH = @srcdir@
+target_alias = @target_alias@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+tooldir = $(exec_prefix)/$(target_alias)
+etcdir = $(exec_prefix)/etc
+program_transform_name = @program_transform_name@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+CC = @CC@
+
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+INCLUDES = -I. -I$(srcdir)/.. -I$(srcdir)/../include
+
+ALL_CFLAGS = $(CFLAGS) $(INCLUDES)
+ALL_CXXFLAGS = $(CXXFLAGS) $(INCLUDES)
+
+# Passed in from ../Makefile.
+EXE_LDFLAGS =
+
+all: regexp.o regerror.o regsub.o
+
+regexp.o: regexp.c regexp.h regmagic.h
+#	$(CC) $(srcdir)/regexp.c $(ALL_CFLAGS) $(EXE_LDFLAGS)
+
+regerror.o: regerror.c regexp.h
+
+regsub.o: regsub.c regexp.h regmagic.h
+
+clean:
+	rm -f *.o $(PROGS)
+
+realclean: clean
+	rm -f  Makefile config.cache 
+
+install:
+	$(INSTALL_DATA) $(srcdir)/regexp.h $(tooldir)/include/regexp.h
+
+installdirs:
+
+Makefile: Makefile.in $(srcdir)/configure.in config.status
+	$(SHELL) config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+.NOEXPORT:
+
+.SUFFIXES: .cc .c .o
+
+.c.o:
+	$(CC) -c $(ALL_CFLAGS) $<
+
+.cc.o:
+	$(CC) -c $(ALL_CXXFLAGS) $<

@@ -1,0 +1,12 @@
+class GDBWin {
+  private variable _state
+  public method update
+
+ constructor {args} {
+    debug "GDBWin::constructor $args"
+  }
+
+  destructor {
+    debug "GDBWin::destructor"
+  }
+}

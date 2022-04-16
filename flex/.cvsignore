@@ -1,0 +1,7 @@
+Makefile
+config.status
+flex
+parse.c
+parse.h
+scan.c
+skeltext.c

@@ -1,0 +1,141 @@
+# Makefile for examples.
+
+SHELL = /bin/sh
+
+CC = $(CC_FOR_TARGET)
+
+CC_FOR_TARGET = ` \
+  if [ -f $${rootme}/../gcc/xgcc ] ; then \
+    if [ -f $${rootme}/../newlib/Makefile ]; then \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/ -idirafter $${rootme}/../newlib/targ-include -idirafter $${rootsrc}/../newlib/libc/include -nostdinc -L$${rootme}/../newlib -B$${rootme}/../newlib/; \
+    else \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/; \
+    fi; \
+  else \
+    if [ "$(host_canonical)" = "$(target_canonical)" ] ; then \
+      echo gcc; \
+    else \
+      t='$(program_transform_name)'; echo gcc | sed -e '' $$t; \
+    fi; \
+  fi`
+
+CXX = $(CXX_FOR_TARGET)
+
+CXX_FOR_TARGET = ` \
+  if [ -f $${rootme}/../gcc/xgcc ] ; then \
+    if [ -f $${rootme}/../newlib/Makefile ]; then \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/ -idirafter $${rootme}/../newlib/targ-include -idirafter $${rootsrc}/../newlib/libc/include -nostdinc -L$${rootme}/../newlib -B$${rootme}/../newlib/; \
+    else \
+      echo $${rootme}/../gcc/xgcc -B$${rootme}/../gcc/; \
+    fi; \
+  else \
+    if [ "$(host_canonical)" = "$(target_canonical)" ] ; then \
+      echo gcc; \
+    else \
+      t='$(program_transform_name)'; echo gcc | sed -e '' $$t; \
+    fi; \
+  fi`
+
+# Directory containing source files.  Don't clean up the spacing,
+# this exact string is matched for by the "configure" script.
+srcdir = .
+
+# All the includes used for CFLAGS and for lint.
+# -I. for config files.
+# -I${srcdir} possibly for regex.h also.
+# -I${srcdir}/config for more generic config files.
+INCLUDE_CFLAGS = -I. -I${srcdir} -I${srcdir}/config
+
+# CFLAGS is specifically reserved for setting from the command line
+# when running make.  I.E.  "make USER_CFLAGS=-Wmissing-prototypes".
+CFLAGS = -g
+
+# INTERNAL_CFLAGS is the aggregate of all other *CFLAGS macros.
+INTERNAL_CFLAGS = $(CFLAGS) $(INCLUDE_CFLAGS) $(USER_CFLAGS)
+# None of the things in CFLAGS will do any harm, and on some systems
+#  (e.g. SunOS4) it is important to use the MH_CFLAGS.
+LDFLAGS = $(CFLAGS)
+
+# Host and target-dependent makefile fragments come in here.
+####
+# End of host and target-dependent makefile fragments
+
+# Prevent Sun make from putting in the machine type.  Setting
+# TARGET_ARCH to nothing works for SunOS 3, 4.0, but not for 4.1.
+.c.o:
+	${CC} -c ${INTERNAL_CFLAGS} $<
+
+OFILES =
+
+PROGRAMS = tiny hello stu stanford prime
+
+SUBDIRS = dhrystone
+
+FLAGS_TO_PASS = \
+        'CC=$$(CC_FOR_TARGET)' \
+        "CC_FOR_TARGET=$(CC_FOR_TARGET)" \
+        "CFLAGS=$(CFLAGS)" \
+        'CXX=$$(CXX_FOR_TARGET)' \
+        "CXX_FOR_TARGET=$(CXX_FOR_TARGET)" \
+        "CXXFLAGS=$(CXXFLAGS)"
+
+# Note that "all" should not do anything, because we don't want
+# a "make all" from the top to try to build anything here.
+
+all:
+
+examples:	$(PROGRAMS)
+	@$(MAKE) $(FLAGS_TO_PASS) DO=all "DODIRS=$(SUBDIRS)" subdir_do
+
+prime:	prime.o
+	$(CXX) -o prime $(LDFLAGS) prime.o
+
+tiny:	tiny.o
+	$(CC) -o tiny $(LDFLAGS) tiny.o
+
+tiny.o: tiny.c
+
+hello:	hello.o
+	$(CC) -o hello $(LDFLAGS) hello.o
+
+hello.o: hello.c
+
+stu:	stu.o
+	$(CC) -o stu $(LDFLAGS) stu.o
+
+stu.o: stu.c
+
+stanford:	stanford.o
+	$(CC) -o stanford $(LDFLAGS) stanford.o
+
+stanford.o: stanford.c
+
+info:
+
+install:
+
+install-info:
+
+mostlyclean:
+
+clean:		mostlyclean
+	@$(MAKE) $(FLAGS_TO_PASS) DO=clean "DODIRS=$(SUBDIRS)" subdir_do
+	rm -f *.o $(PROGRAMS)
+
+distclean maintainer-clean realclean:	clean
+	@$(MAKE) $(FLAGS_TO_PASS) DO=$@ "DODIRS=$(SUBDIRS)" subdir_do
+	rm -f Makefile config.status
+
+subdir_do: force
+	@for i in $(DODIRS); do \
+		if [ -f ./$$i/Makefile ] ; then \
+			if (cd ./$$i; \
+				$(MAKE) $(FLAGS_TO_PASS) $(DO)) ; then true ; \
+			else exit 1 ; fi ; \
+		else true ; fi ; \
+	done
+
+Makefile: Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+	$(SHELL) config.status
+
+force:

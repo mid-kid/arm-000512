@@ -1,0 +1,147 @@
+<chapter id="setup-net"><title>Setting Up Cygwin</title>
+
+<sect1><title>Cygwin Contents</title>
+
+<para>The following packages are included in the full release:</para>
+
+<para>Development tools: binutils, bison, byacc, dejagnu, diff,
+expect, flex, gas, gcc, gdb, itcl, ld, libstdc++, make, patch, tcl,
+tix, tk</para>
+
+<para>User tools: ash, bash, bzip2, diff, fileutils, findutils, gawk,
+grep, gzip, m4, sed, shellutils, tar, textutils, time</para>
+
+<para>The user tools release only contains the user tools.</para>
+
+<para>Full source code is available for these tools. It is split into
+these two units.</para>
+
+</sect1>
+<sect1><title>Installing the binary release:</title>
+
+<para>Important!  Be sure to remove any older versions of the Cygwin
+tools from your <literal>PATH</literal> environment variable so you do
+not execute them by mistake.</para>
+
+<para>Connect to one of the ftp servers listed above and cd to the
+directory containing the latest release. On our primary server, that
+would be:</para>
+
+<screen>
+ftp://go.cygnus.com/pub/sourceware.cygnus.com/cygwin/latest/
+</screen>
+
+<para>If you want the development tools and the programs necessary to
+run the GNU configure mechanism, you should download the full binary
+release called <filename>cygwinfull.exe</filename>.  If you only care
+about the user tools listed above, download
+<filename>cygwinuser.exe</filename> instead.</para>
+
+<para>If you have an unreliable connection, download the appropriate
+binary in smaller chunks instead.  For the split full installer, get
+the files in the `full-split' subdirectory.  Once downloaded,
+combine the split files at the command prompt by doing a:</para>
+
+<screen>
+copy /b xaa + xab + xac + ... + xak + xal full.exe
+del xa*.*
+</screen>
+
+<para>A similar process can be used for the user tools.</para>
+
+<para>Once you have an install executable on your system, run
+it.  First off, the installer will prompt you for a location to extract
+the temporary files it needs to install the release on your
+system. The default should be fine for most people.</para>
+
+<para>Next it will ask you to choose an install location.  The default
+is
+<filename><replaceable>system-drive</replaceable>:\cygnus\cygwin-b20</filename>.
+Feel free to choose another location if you would prefer.</para>
+
+<para>Finally, it will ask you for the name of the Program Files
+folder shortcut to add.  By default, the installer will create a
+`Cygwin B20' entry in a folder called `Cygnus Solutions'. When this
+step is completed, it will install the tools and exit.</para>
+
+<para>At this point, you should be able to look under the start menu
+and select "Cygwin Beta 20" (or whatever you named it). This will
+pop up a bash shell with all special environment variables set up for
+you. If you are running Windows 95 or 98 and are faced with the error
+message "Out of environment space", you need to increase the amount of
+environment space in your config.sys and try again. Adding the line
+<command>shell=C:\command.com /e:4096 /p</command> should do the trick
+if <filename>C:</filename> is your system drive letter.</para>
+
+<para>There are two remaining thing you should do from this
+prompt. First, you need to type <command>mkdir -p /tmp</command> to
+ensure that a directory for temporary files exists for programs that
+expect to find one there.</para>
+
+<para>Second, if you are installing the full distribution
+(<filename>full.exe</filename>), various programs will need to
+be able to find <filename>/bin/sh</filename>.  You should 
+<command>mkdir -p /bin</command>' and put a copy of
+<filename>sh.exe</filename> there, removing the older version, if
+present.  You can use the `mount' utility to select which drive letter
+is mounted as <filename>/</filename>.  See the Frequently Asked
+Questions (FAQ) file for more information on `mount'.</para>
+
+<para>If you should ever want to uninstall the tools, you may do so
+via the "Add/Remove Programs" control panel.</para>
+
+</sect1>
+<sect1><title>Installing the source code</title>
+
+<para>Before downloading the source code corresponding to the release,
+you should install the latest release of the tools (either the full
+release or just the user tools).</para>
+
+<para>Create the directory that will house the source code. `cd'
+there.</para>
+
+<para>Connect to one of the ftp servers listed above and cd to the
+directory containing the latest release. On our primary server, that
+would be:</para>
+
+<screen>
+ftp://go.cygnus.com/pub/sourceware.cygnus.com/cygwin/latest/
+</screen>
+
+<para>If you want the user tools source code, `cd' into the
+`user-src-split' subdirectory.  Download the files there.  If you want
+the development tools sources, `cd' into the `dev-src-split'
+subdirectory.  Download the files there.</para>
+
+<para>Back in the Windows command shell, for the user tools
+source:</para>
+
+<screen>
+copy /b xba + xbb + xbc + xbd + xbe + xbf + xbg user-src.tar.bz2
+del xb*.*
+bunzip2 user-src.tar.bz2
+tar xvf user-src.tar
+</screen>
+
+<para>For the development tools source:</para>
+
+<screen>
+copy /b xca + xcb + xcc + xcd + ... + xck + xcl dev-src.tar.bz2
+del xc*.*
+bunzip2 dev-src.tar.bz2
+tar xvf dev-src.tar
+</screen>
+
+<para>Both will expand into a directory called
+<filename>src</filename>.</para>
+
+<para>Note: if you want the sources corresponding to everything in the
+full.exe binary installer, you will need to download and expand both
+the <filename>user-src.tar.bz2</filename> and
+<filename>dev-src.tar.bz2</filename> source archives!</para>
+</sect1>
+
+DOCTOOL-INSERT-setup-env
+DOCTOOL-INSERT-setup-files
+DOCTOOL-INSERT-setup-dir
+</chapter>

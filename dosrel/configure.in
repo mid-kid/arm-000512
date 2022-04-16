@@ -1,0 +1,97 @@
+# This file is configure.in
+#
+#   Copyright (C) 1994, 1996, 1997 Free Software Foundation, Inc.
+#
+#  This file is part of the GNU DOS tools release
+#
+#  The GNU DOS tools are free software; you can redistribute them and/or modify
+#  them under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2, or (at your option)
+#  any later version.
+#
+#  The GNU DOS tools are distributed in the hope that they will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with the GNU DOS tools; see the file COPYING.  If not, write to
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+#
+
+# This file is a shell script that supplies the information necessary
+# to tailor a template configure script into the configure script
+# appropriate for this directory.  For more information, check any
+# existing configure script.
+
+srctrigger=Makefile.in
+srcname="dosrel"
+need_bfd=no
+bfd_gas=no
+configdirs="doc testsuite"
+
+# per-host:
+
+gas_host=generic
+
+case "${host}" in
+  *-*go32)		;;
+  *-cygwin*) 
+	host_makefile_frag=config/cygwin.mh
+		;;
+	*)
+		echo "This only works for dos" ;;
+esac 
+
+# per-target:
+
+case "${target}" in
+    a29k-amd-udi)
+		target_makefile_frag=config/a29k-amd-udi.mt
+		;;
+    i386*aout)
+		target_makefile_frag=config/i386-aout.mt
+		;;
+    i*86*cygwin*)
+		target_makefile_frag=config/i386-cygwin.mt
+		;;
+    powerpc*eabi)
+		target_makefile_frag=config/powerpc-eabi.mt
+		;;
+    powerpcle*cygwin*)
+		target_makefile_frag=config/powerpcle-cygwin.mt
+		;;
+    arm*pe)
+		target_makefile_frag=config/arm-pe.mt
+		;;
+    hppa*)
+		target_makefile_frag=config/hppa.mt
+		;;
+    sparclite*)
+		target_makefile_frag=config/sparclite.mt
+		;;
+    m68k*)
+		target_makefile_frag=config/m68k.mt
+		;;
+    mips64vr*-*-elf)
+		target_makefile_frag=config/mips64vrelf.mt
+		;;
+    mips64-*-elf)
+		target_makefile_frag=config/mips64elf.mt
+		;;
+    h8300-*-*)
+		target_makefile_frag=config/h8300.mt
+		;;
+    sh-*)
+		target_makefile_frag=config/sh.mt
+		;;
+
+    *)		echo "** HEY **"
+		echo "DOSREL not been tested for ${target} yet."
+		echo "Some bits may not be prepared correctly."
+		echo "eg. multilib stuff will be missing"
+		echo "and the demo will be dull"
+		target_makefile_frag=config/default.mt
+		;;
+
+esac

@@ -1,0 +1,44 @@
+
+
+How to make a dos release:
+
+first build the dos tree, something like:
+
+../devo/configure --target=mips64-elf --host=i386-coff-go32 --build==sun4 --prefix=/b/dosbin
+make all info install 
+
+would do nicely
+
+then take the tree in /b/dosbin/dos/mips64-elf and put it on a pc somewhere nice like:
+
+c:\rel\mips64-elf\orig
+
+
+I do this by tarring the files across.  Then you don't get the odd characters in filenames
+which PCNFS sometimes adds.
+
+On the pc run 
+
+relit c:\rel\mips64-elf
+
+It will churn away, work out what to stick on each disk and build some
+subdirectories.  This has to be run on the PC for the moment because
+we use Microsoft's COMPRESS and EXPAND utilities.
+
+You'll get:
+
+c:\rel\mips64-elf\disk\disk0...
+
+
+Then run 
+
+diskit c:\rel\mips64-elf b:
+
+and it will prompt you to insert disks and stuff.  It will also erase anything on the floppy
+first.
+
+
+
+
+
+

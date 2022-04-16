@@ -1,0 +1,217 @@
+<sect1 id="setup-env"><title>Environment Variables</title>
+
+<para> Before starting bash, you must set some environment variables, some
+of which can also be set or modified inside bash. 
+Cygnus provides you with a .bat file installed by default in
+<filename>\cygnus\cygwin-b20/cygnus.bat</filename>
+where the most important ones are set before bash in launched.
+This is the safest way to launch bash initially. 
+You can edit it to your liking.
+</para>
+
+<para>The most important environment variable is the
+<literal>CYGWIN</literal> variable.  It is used to configure many
+global settings for the Cygwin runtime system.
+Initially you can leave <literal>CYGWIN</literal> unset or set it to
+<literal>tty</literal> using a syntax like this in the DOS shell,
+before launching bash. </para> <screen>
+set CYGWIN="tty notitle strace=0x1"
+</screen>
+
+<para>The <literal>PATH</literal> environment variable is used by
+Cygwin applications as a list of directories to search for executable
+files to run.  This environment variable is converted from Windows
+format (e.g. <filename>C:\WinNT\system32;C:\WinNT</filename>)
+to UNIX format (e.g., <filename>/WinNT/system32:/WinNT</filename>) when
+a Cygwin process first starts.</para>
+
+<para> Set it so that it contains at least the Cygnus 
+<filename>bin</filename> directory 
+<filename>C:\cygnus\cygwin-b20\H-i586-cygwin32\bin</filename>
+before launching bash. </para>
+
+<para>The <literal>HOME</literal> environment variable is used by UNIX
+programs to determine the location of your home directory.  This
+environment variable is also converted from Windows format when a
+Cygwin process first starts.  Set it to point to your home directory
+before launching bash. </para>
+
+<para> The <literal>TERM</literal> environment variable specifies your
+terminal type.  You can set it to <literal>cygwin</literal>.
+</para>
+
+<para>The <literal>LD_LIBRARY_PATH</literal> environment variable is
+used by the Cygwin function <function>dlopen ()</function> as a list
+of directories to search for .dll files to load.  This environment
+variable is converted from Windows format
+(e.g. <filename>C:\WinNT\system32;C:\WinNT</filename>) to UNIX format
+(e.g., <filename>/WinNT/system32:/WinNT</filename>) when a Cygwin
+process first starts.
+Most Cygwin applications do not make use of the
+<function>dlopen ()</function> call; as a result, this environment
+variable is not set by default.
+</para>
+
+<para><filename>make</filename> uses an environment variable
+<literal>MAKE_MODE</literal> to decide if it uses
+<filename>command.com</filename> or <filename>/bin/sh</filename> to
+run command lines.  If you are getting strange errors from
+<filename>make</filename> about "/c not found", set
+<literal>MAKE_MODE</literal> to <literal>UNIX</literal> at the command
+prompt or in bash.</para>
+
+<screen>
+C:\> set MAKE_MODE=UNIX
+
+$ export MAKE_MODE=UNIX
+</screen>
+
+</sect1>
+
+<sect1 id="setup-files"><title>Customizing bash</title>
+
+<para>
+To set bash up so that cut and paste work properly, click on the
+"properties" button of the window, then on the "misc" tab. 
+Make sure that "Quick Edit" is checked and "Fast Pasting" isn't.
+These settings will be remembered next time you run bash from that
+shortcut.
+</para>
+
+<para> Your home directory should contain three initialization files
+that control the behavior of bash. They are <filename>.profile</filename>,
+<filename>.bashrc</filename> and <filename>.inputrc</filename>.
+</para>
+
+<para> <filename>.profile</filename> (other names are also valid, see 
+the bash man page) contains bash commands. It is executed when
+bash is started as login shell, e.g. from the command 
+<command>bash --login</command>.
+This is a useful place to define and export environment variables 
+and bash functions that will be used by bash and the programs invoked
+by bash.  It is a good place to redefine <literal>PATH</literal> if
+needed, for example adding a ":." to the end to also search the current
+working directory (contrary to DOS, the local directory is not
+searched by default).  Also to avoid delays you should either
+<command>unset MAILCHECK</command> or set <literal>MAILPATH</literal>
+to point to your existing mail inbox.
+</para>
+
+<para> <filename>.bashrc</filename> is similar to 
+<filename>.profile</filename> but is executed
+each time an interactive bash shell is launched. 
+It serves to define elements that are not inherited through the environment,
+such as aliases. If you do not use login shells, you may want to put
+the contents of <filename>.profile</filename> as discussed above in
+this file instead.</para>
+
+<para>
+<screen>
+shopt -s nocaseglob
+</screen>
+will allow bash to glob filenames in a case-insensitive manner.
+Note that <filename>.bashrc</filename> is not called automatically for login 
+shells. You can source it from <filename>.profile</filename>.
+</para>
+
+<para> <filename>.inputrc</filename> controls how programs using the
+readline library (including bash) behave. It is loaded automatically.
+The full details are in the <filename>readline.info</filename>.
+The following settings are useful:</para>  
+<screen>
+# Make Bash 8bit clean
+set meta-flag on
+set convert-meta off
+set output-meta on
+# Ignore case while completing
+set completion-ignore-case onn
+</screen>
+<para> The first three commands allow bash to display 8-bit characters, 
+useful for languages with accented characters.
+The last line makes filename completion case insensitive, 
+which can be convenient in a Windows environment.
+</para>
+
+<para>Having setup the environment and the initialization files
+you are now ready to launch <command>bash --login</command>.
+Until you know your way around the system, use the Cygnus provided
+<command>cygnus.bat</command>.
+</para>
+
+</sect1>
+
+<sect1 id="setup-dir"><title>Directory Structure</title>
+
+<para>Cygwin knows how to emulate a standard UNIX directory
+structure, to some extent, with the <command>mount</command> command.  
+When you setup the system you have to decide where you want the
+root to be mapped. 
+Possible choices are the root of your Windows system, 
+such as <filename>c:</filename>
+or a directory such as <filename>c:\progra~1\root</filename>.
+Create the directory if needed, then <command>umount /</command>
+the current root and mount it in its new place.
+You also have to decide if you want to use text or binary mode.
+</para>
+
+<para>Next you have to create the traditional main UNIX directories, 
+with the command <command>mkdir 
+<filename>/tmp</filename>
+<filename>/bin</filename>
+<filename>/etc</filename>
+<filename>/usr</filename> </command>.  (Notes: there is one space
+between each directory, creating several directories in one command is
+only supported by Cygwin's mkdir command or in the NT command shell).
+Next, we will initialize the content of these directories.
+</para>
+
+<para>You should make sure that you always have a valid
+<filename>/tmp</filename> directory.  If you want to avoid creating a
+real <filename>/tmp</filename>, you can use the
+<command>mount</command> utility to point <filename>/tmp</filename> to
+another directory, such as <filename>c:\tmp</filename>.
+</para>
+
+<para> The <filename>/bin</filename> directory should contain the shell
+<filename>sh.exe</filename>.  You have three choices. The first is to copy
+this program from the Cygnus <filename>bin</filename> directory.  The second
+is to use <command>mount</command> to mount the Cygnus
+<filename>bin</filename> directory to <filename>/bin</filename> (the
+advantage of this approach is that your PATH will look cleaner). The third
+is to make <filename>/bin</filename> a symbolic link to the Cygnus
+<filename>bin</filename> directory.</para>
+
+<para> You may want to copy to <filename>/etc</filename> the 
+<filename>termcap</filename> file from the Cygnus <filename>etc</filename> 
+directory, although the defaults built into the programs suffice for the 
+normal console. You may also use <command>mount</command> or create
+as symbolic link, as for <filename>/bin</filename> above.
+If you want to emulate the
+<filename>/etc</filename> directory (i.e. so <command>ls -l</command>
+works), just do this:</para>
+<screen>
+$ cd /etc
+mkpasswd > /etc/passwd
+mkgroup > /etc/group
+</screen>
+
+<para>Note: this only works fully under Windows NT.  Under Windows 9x,
+you may need to edit these files with a text editor.  Note that
+further changes to your NT registry will NOT be reflected in
+/etc/passwd or /etc/group after this so you may want to regenerate
+these files periodically.
+</para>
+
+<para>The <filename>/usr</filename> directory is not used by the Cygwin
+system, but you may want to install optional packages there. </para>
+
+<para>You may also want to mount directories such as
+<filename>/a</filename> and <filename>/d</filename> to refer to your
+local and network drives.
+
+<para>You do not need to create <filename>/dev</filename> in order
+to set up mounts for devices such as <filename>/dev/null</filename>) as 
+these are already automatically simulated inside the Cygwin
+library.</para>
+
+</sect1>

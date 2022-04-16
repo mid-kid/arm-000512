@@ -1,0 +1,348 @@
+# This file is CYGNUS LOCAL.  It is a copy of makefile.vc modified for
+# GNU make.
+#  
+# Visual C++ 4.0 makefile
+#
+# Copyright (c) 1993-1996 Lucent Technologies
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+VPATH = @srcdir@:@srcdir@/../generic:@srcdir@/../unix
+srcdir = @srcdir@
+
+CC = @CC@
+CFLAGS = @CFLAGS@
+NM = @NM@
+AS = @AS@
+LD = @LD@
+DLLTOOL = @DLLTOOL@
+WINDRES = @WINDRES@
+
+DLL_LDFLAGS = @DLL_LDFLAGS@
+DLL_LDLIBS  = @DLL_LDLIBS@
+
+INSTALL		=	@INSTALL@
+INSTALL_PROGRAM =	@INSTALL_PROGRAM@
+INSTALL_DATA	=	@INSTALL_DATA@
+
+#
+# Project directories
+#
+# ROOT    = top of source tree
+#
+# TMPDIR  = location where .obj files should be stored during build
+#
+
+ROOT		= @ITCL_SRC_DIR@
+TMPDIR		= .
+TCLDIR		= $(srcdir)/../../../tcl
+
+TCLLIBDIR	= @TCL_BIN_DIR@
+
+SRC_INC_DIR	=	@ITCL_SRC_DIR@/generic
+SRC_WIN_DIR	=	@ITCL_SRC_DIR@/win
+SRC_UNIX_DIR	=	@ITCL_SRC_DIR@/unix
+SRC_LIB_DIR	=	@ITCL_SRC_DIR@/library
+SRC_MAN_DIR	=	@ITCL_SRC_DIR@/doc
+
+ITCL_VERSION = @ITCL_VERSION@
+VERSION = 30
+
+ITCLLIB		= libitcl$(VERSION).a
+ITCLDLL		= cygitcl$(VERSION).dll
+ITCLSH		= cygitclsh$(VERSION).exe
+ITCLTEST		= itcltest.exe
+
+# Directory in which to install the library of Itcl scripts and demos
+# (note: you can set the ITCL_LIBRARY environment variable at run-time to
+# override the compiled-in location):
+ITCL_LIBRARY =	$(prefix)/share/itcl$(ITCL_VERSION)
+
+# Directory in which to install the archive libitcl.a:
+INSTALL_LIB_DIR =	$(exec_prefix)/lib
+
+# Directory in which to install the program itclsh:
+INSTALL_BIN_DIR =	$(exec_prefix)/bin
+
+# Directory in which to install the include file itcl.h:
+INSTALL_INCLUDE_DIR =	$(prefix)/include
+
+# Top-level directory for manual entries:
+INSTALL_MAN_DIR =	$(prefix)/man
+
+# Directory in which to install manual entry for itclsh:
+INSTALL_MAN1_DIR =	$(INSTALL_MAN_DIR)/man1
+
+# Directory in which to install manual entries for Itcl's C library
+# procedures:
+INSTALL_MAN3_DIR =	$(INSTALL_MAN_DIR)/man3
+
+# Directory in which to install manual entries for the built-in
+# Tcl commands implemented by Itcl:
+INSTALL_MANN_DIR =	$(INSTALL_MAN_DIR)/mann
+
+
+# Comment the following line to compile with symbols
+NODEBUG=1
+
+# uncomment the following two lines to compile with TCL_MEM_DEBUG
+#DEBUGDEFINES	= -DTCL_MEM_DEBUG
+
+
+ITCLSHOBJS = \
+	$(TMPDIR)/tclAppInit.o
+
+ITCLOBJS = \
+	$(TMPDIR)/itcl_bicmds.o \
+	$(TMPDIR)/itcl_class.o \
+	$(TMPDIR)/itcl_cmds.o \
+	$(TMPDIR)/itcl_ensemble.o \
+	$(TMPDIR)/itcl_linkage.o \
+	$(TMPDIR)/itcl_methods.o \
+	$(TMPDIR)/itcl_migrate.o \
+	$(TMPDIR)/itcl_objects.o \
+	$(TMPDIR)/itcl_obsolete.o \
+	$(TMPDIR)/itcl_parse.o \
+	$(TMPDIR)/itcl_util.o \
+	$(TMPDIR)/dllEntryPoint.o
+
+DUMPEXTS = # $(TCLLIBDIR)/dumpexts.exe
+ITCLSH = cygitclsh.exe
+ITCLTEST = cygitcltest.exe
+ITCLLIB	= libitcl$(VERSION).a
+ITCLDLL	= itcl$(VERSION).dll
+
+TCLLIB		= @TCL_LIB_FILE@
+
+ITCL_INCLUDES	= -I$(SRC_WIN_DIR) -I$(SRC_INC_DIR) -I$(TCLDIR)/generic -I$(TCLDIR)/win
+
+ITCL_DEFINES	= -D__WIN32__ $(DEBUGDEFINES) 
+ITCL_CFLAGS		= $(ITCL_INCLUDES) $(ITCL_DEFINES) $(CFLAGS)
+
+CPU		   = i386
+
+######################################################################
+# Link flags
+######################################################################
+
+conlflags = -Wl,--subsystem,console -mwindows
+guilflags = -mwindows
+dlllflags =
+
+baselibs   = -lkernel32 $(optlibs) -ladvapi32 -luser32
+winlibs    = $(baselibs) -lgdi32 -lcomdlg32 -lwinspool
+
+guilibs	   = $(libc) $(winlibs)
+conlibs	   = $(libc) $(baselibs)
+guilibsdll = $(libcdll) $(winlibs)
+conlibsdll = $(libcdll) $(baselibs)
+
+#
+# Targets
+#
+
+release:  $(ITCLDLL) $(ITCLSH)
+all:	    $(ITCLDLL) $(ITCLSH)
+test:	    $(ITCLSH)
+	$(CP) $(TCLLIBDIR)\*.dll
+	$(ITCLSH) <<
+		cd ../tests
+		source all
+
+$(TMPDIR)/itclcyg.def: $(DUMPEXTS) $(ITCLOBJS)
+	echo 'EXPORTS' > tmp.def
+	-for o in $(ITCLOBJS); do \
+	  $(NM) --extern-only --defined-only $$o | sed -e 's/[^ ]* [^ ]* //' -e 's/^_//' | fgrep -v DllEntryPoint | fgrep -v DllMain | fgrep -v impure_ptr >> tmp.def; \
+	done
+	mv tmp.def $(TMPDIR)/itclcyg.def
+
+
+$(ITCLDLL): $(ITCLOBJS) $(TMPDIR)/itclcyg.def
+	$(CC) -s $(DLL_LDFLAGS) -Wl,--base-file,itcl.base \
+		-o $(ITCLDLL) $(ITCLOBJS)  \
+		$(TCLLIBDIR)/$(TCLLIB) \
+		$(DLL_LDLIBS) -mwindows -Wl,-e,_DllMain@12  \
+		-Wl,--image-base,0x66700000
+	$(DLLTOOL) --as=$(AS) --dllname $(ITCLDLL) --def $(TMPDIR)/itclcyg.def \
+		--base-file itcl.base --output-exp itcl.exp
+	$(CC) -s $(DLL_LDFLAGS) -Wl,--base-file,itcl.base -Wl,itcl.exp \
+		-o $(ITCLDLL) $(ITCLOBJS)  \
+		$(TCLLIBDIR)/$(TCLLIB) $(DLL_LDLIBS) -mwindows -Wl,-e,_DllMain@12 \
+		-Wl,--image-base,0x66700000
+	$(DLLTOOL) --as=$(AS) --dllname $(ITCLDLL) --def $(TMPDIR)/itclcyg.def \
+		--base-file itcl.base --output-exp itcl.exp
+	$(CC) $(DLL_LDFLAGS) -Wl,itcl.exp -o $(ITCLDLL) $(ITCLOBJS) \
+		$(TCLLIBDIR)/$(TCLLIB) \
+		$(DLL_LDLIBS) -mwindows	 -Wl,-e,_DllMain@12 \
+		 -Wl,--image-base,0x66700000
+
+$(ITCLLIB): $(TMPDIR)/itclcyg.def
+	$(DLLTOOL) --as=$(AS) --dllname $(ITCLDLL) --def $(TMPDIR)/itclcyg.def \
+		--output-lib $(ITCLLIB)
+
+$(ITCLSH): $(ITCLSHOBJS) $(ITCLLIB) $(TMPDIR)/itclshres.o
+	$(CC) $(linkdebug) $(conlflags) -Wl,--stack=0x2300000 \
+		$(ITCL_CFLAGS) \
+		$(ITCLSHOBJS) $(TMPDIR)/itclshres.o \
+		$(ITCLLIB) $(TCLLIBDIR)/$(TCLLIB) $(conlibsdll) \
+		-o $(ITCLSH)
+
+$(ITCLTEST): $(ITCLTESTOBJS) $(ITCLLIB) $(TMPDIR)/itclshres.o
+	$(CC) $(linkdebug) $(conlflags) -Wl,--stack=0x2300000 \
+		$(ITCL_CFLAGS) \
+		$(ITCLTESTOBJS) $(TMPDIR)/itclshres.o \
+		$(ITCLLIB) $(TCLLIBDIR)/$(TCLLIB) $(conlibsdll) \ 
+		-o $(ITCLTEST)
+ 
+#
+# Special case object file targets
+#
+
+$(TMPDIR)/itclshres.o: $(ROOT)/win/itclsh.rc
+	$(WINDRES) --include $(TCLDIR)/generic --include $(srcdir)/../generic \
+	--define VS_VERSION_INFO=1 $(srcdir)/itclsh.rc $(TMPDIR)/itclshres.o
+
+$(TMPDIR)/itclres.o: $(ROOT)/win/itcl.rc
+	$(WINDRES) --include  $(TCLDIR)/generic --include $(srcdir)/../generic \
+	--define VS_VERSION_INFO=1 $(srcdir)/itcl.rc $(TMPDIR)/itclres.o
+
+$(TMPDIR)/testMain.o: $(SRC_WIN_DIR)/tclAppInit.c
+	$(CC) -c $(ITCL_CFLAGS) -DTCL_TEST $(CFLAGS) -o $@ $?
+
+$(TMPDIR)/tclAppInit.o: $(SRC_WIN_DIR)/tclAppInit.c
+	$(CC) -c $(ITCL_CFLAGS) $(CFLAGS) -o $@ $?
+
+#$(DUMPEXTS): $(TCLDIR)\win\winDumpExts.c
+#	$(cc32) $(CON_CFLAGS) -Fo$(TMPDIR)\ $?
+#	set LIB=$(TOOLS32)\lib
+#	$(link32) $(ldebug) $(conlflags) $(guilibs) -out:$@ \
+#		$(TMPDIR)\winDumpExts.obj 
+
+#
+# Implicit rules
+#
+
+$(TMPDIR)/%.o: $(SRC_INC_DIR)/%.c
+	$(CC) -c $(ITCL_CFLAGS) -o $@ $<
+
+$(TMPDIR)/%.o: $(SRC_WIN_DIR)/%.c
+	$(CC) -c $(ITCL_CFLAGS) -o $@ $<
+
+clean:
+
+	rm -f $(TMPDIR)/*.o $(TMPDIR)/*.exp $(TMPDIR)/*.def 
+	rm -f $(ITCLLIB) $(ITCLDLL) $(ITCLDLL) $(ITCLSH)
+
+
+Makefile: $(srcdir)/Makefile.in config.status
+	$(SHELL) config.status
+
+config.status: $(srcdir)/configure
+	./config.status --recheck
+
+#----------------------------------------------------------------------
+#
+#			Installation
+#
+#----------------------------------------------------------------------
+
+
+install:: install-basic install-binaries
+	@echo done
+
+install-binaries::
+	@for i in $(INSTALL_LIB_DIR) $(INSTALL_BIN_DIR) ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@echo "Installing $(ITCLLIB) as $(INSTALL_LIB_DIR)/$(ITCLLIB)"
+	@$(INSTALL_DATA) $(ITCLLIB) $(INSTALL_LIB_DIR)/$(ITCLLIB)
+	@echo "Installing $(ITCLSH) as $(INSTALL_BIN_DIR)/$(ITCLSH)"
+	@$(INSTALL_PROGRAM) $(ITCLSH) $(INSTALL_BIN_DIR)/$(ITCLSH)
+	@echo "Installing $(ITCLDLL) as $(INSTALL_BIN_DIR)/$(ITCLDLL)"
+	@$(INSTALL_PROGRAM) $(ITCLDLL) $(INSTALL_BIN_DIR)/$(ITCLDLL)
+
+#
+# Basic installtion
+#
+install-basic:: install-libraries install-headers  \
+	install-man
+
+
+install-headers:
+	@for i in $(INSTALL_INCLUDE_DIR); \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@for i in $(SRC_INC_DIR)/itcl.h; \
+	    do \
+	    echo "Installing $$i"; \
+	    $(INSTALL_DATA) $$i $(INSTALL_INCLUDE_DIR); \
+	    done;
+
+install-libraries:
+	@for i in $(prefix)/lib $(ITCL_LIBRARY); \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@for i in $(SRC_LIB_DIR)/*.tcl ; \
+	    do \
+	    echo "Installing $$i"; \
+	    $(INSTALL_DATA) $$i $(ITCL_LIBRARY); \
+	    done;
+
+	@echo "Installing pkgIndex.tcl"
+	@$(INSTALL_DATA) $(srcdir)/pkgIndex.tcl $(ITCL_LIBRARY)
+
+
+install-man:
+	@for i in $(INSTALL_MAN_DIR) $(INSTALL_MAN1_DIR) \
+	    $(INSTALL_MAN3_DIR) $(INSTALL_MANN_DIR) ; \
+	    do \
+	    if [ ! -d $$i ] ; then \
+		echo "Making directory $$i"; \
+		mkdir $$i; \
+		chmod 755 $$i; \
+		else true; \
+		fi; \
+	    done;
+	@cd $(SRC_MAN_DIR); for i in *.n ; \
+	    do \
+	    echo "Installing doc/$$i"; \
+	    rm -f $(INSTALL_MANN_DIR)/$$i; \
+	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
+		    $$i > $(INSTALL_MANN_DIR)/$$i; \
+	    chmod 444 $(INSTALL_MANN_DIR)/$$i; \
+	    done; \
+	for i in *.1 ; \
+	    do \
+	    echo "Installing doc/$$i"; \
+	    rm -f $(INSTALL_MAN1_DIR)/$$i; \
+	    sed -e '/man\.macros/r man.macros' -e '/man\.macros/d' \
+		    $$i > $(INSTALL_MAN1_DIR)/$$i; \
+	    chmod 444 $(INSTALL_MAN1_DIR)/$$i; \
+	    done;
+
+install-info info installcheck:
+
+install-minimal: install-libraries
+	@echo "Installing $(ITCLDLL) as $(INSTALL_BIN_DIR)/$(ITCLDLL)"
+	@$(INSTALL_PROGRAM) $(ITCLDLL) $(INSTALL_BIN_DIR)/$(ITCLDLL)

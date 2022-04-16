@@ -1,0 +1,123 @@
+# Makefile for DOS release preparation
+#   Copyright (C) 1993, 94, 95, 96, 97, 1998 Free Software Foundation, Inc.
+
+# This file is part of the GNU DOS cross-tools distribution.
+
+# The GNU DOS tools are free software; you can redistribute them and/or modify
+# them under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# The GNU DOS tools are distributed in the hope that they will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with the GNU DOS tools; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# The targets for external use include:
+# all, doc, proto, install, uninstall, includes, TAGS,
+# clean, cleanconfig, realclean, stage1, stage2, stage3, stage4.
+
+# Variables that exist for you to override.
+# See below for how to change them for certain systems.
+
+srcdir = .
+srcroot = $(srcdir)/..
+
+prefix = /usr/local
+
+program_transform_name =
+exec_prefix = $(prefix)
+bindir = $(exec_prefix)/bin
+libdir = $(exec_prefix)/lib
+tooldir = $(libdir)/$(target_alias)
+targetbindir = ${exec_prefix}/${target_alias}/bin
+targetincludedir = ${exec_prefix}/${target_alias}/include
+
+datadir = $(prefix)/share
+mandir = $(prefix)/man
+man1dir = $(mandir)/man1
+man2dir = $(mandir)/man2
+man3dir = $(mandir)/man3
+man4dir = $(mandir)/man4
+man5dir = $(mandir)/man5
+man6dir = $(mandir)/man6
+man7dir = $(mandir)/man7
+man8dir = $(mandir)/man8
+man9dir = $(mandir)/man9
+infodir = $(prefix)/info
+includedir = $(prefix)/include
+
+VERSION=2.2-arm-000512
+
+SHELL = /bin/sh
+
+INSTALL = ${srcroot}/install-sh -c
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
+
+AR = ar
+AR_FLAGS = qv
+BISON = bison
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+RANLIB = ranlib
+CFLAGS = -g
+INSTALL_TARGET = install-dostree
+WANT = install
+HOST = H-dos
+MAKETREE=makedostree
+
+#### host, target, and site specific Makefile frags come in here.
+###
+
+######################################################################
+# go32-hosted toolchains
+
+install-dostree: dosifytree diskit license.info unix2dos force coff2exe doscheck
+	$(srcdir)/$(MAKETREE) A ${exec_prefix} ${target_alias} ${prefix} ${srcdir} $(DEMODIR) $(MULTILIB)
+
+disks: force
+	$(srcdir)/$(MAKETREE) D ${exec_prefix} ${target_alias} ${prefix} ${srcdir} $(DEMODIR) $(MULTILIB)
+
+license.info:
+	makeinfo -I$(srcdir)/../texinfo --no-split -o license.info $(srcdir)/../texinfo/license.texi
+
+clean:	
+	rm -f *stamp
+
+# Dummy target to force execution of dependent targets.
+#
+force:
+
+.PHONY: force
+
+Makefile: $(srcdir)/Makefile.in $(host_makefile_frag) $(target_makefile_frag)
+	$(SHELL) ./config.status
+
+diskit : diskit.c
+	gcc -o diskit $<
+
+dosifytree : dosifytree.c
+	gcc -o dosifytree $<
+
+unix2dos : unix2dos.c
+	gcc -o unix2dos $<
+
+coff2exe : coff2exe.c
+	gcc -o coff2exe $<
+
+doscheck : doscheck.c
+	gcc -o doscheck $<
+
+info:
+
+install-info:
+
+all:
+
+install: $(INSTALL_TARGET)
+
