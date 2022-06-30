@@ -75,6 +75,16 @@ target_libs="target-libiberty \
 #
 target_tools="target-examples target-groff target-gperf"
 
+case "${enable_minimal}" in
+  yes | "")
+    host_libs="libiberty opcodes bfd"
+    host_tools="flex bison binutils ld gas gcc"
+
+    enable_nls=no
+    disableoptions="$disableoptions --disable-nls"
+    ;;
+esac
+
 ################################################################################
 
 ## These two lists are of directories that are to be removed from the
