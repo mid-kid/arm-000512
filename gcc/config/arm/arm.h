@@ -450,7 +450,7 @@ enum prog_mode_type
 };
 
 /* Recast the program mode class to be the prog_mode attribute */
-#define arm_prog_mode ((enum attr_prog_mode) arm_prgmode)
+#define arm_prog_mode (arm_prgmode)
 
 extern enum prog_mode_type arm_prgmode;
 
