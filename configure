@@ -1057,6 +1057,11 @@ else
   CXX=${CXX-"c++"}
   CFLAGS=${CFLAGS-"-g"}
   CXXFLAGS=${CXXFLAGS-"-g -O2"}
+
+  # Fix missing bison during binutils configure
+  # The in-tree version of bison will be used, so we can rely on this
+  export ac_cv_prog_LEX=flex
+  export ac_cv_prog_lex_root=lex.yy
 fi
 
 export CC
