@@ -35,7 +35,6 @@ Boston, MA 02111-1307, USA.  */
 
 
 int current_function_anonymous_args = 0;
-static int current_function_has_far_jump = 0;
 
 /* Used to parse -mstructure_size_boundary command line option.  */
 char * structure_size_string = NULL;
@@ -978,10 +977,7 @@ int
 far_jump_used_p (void)
 {
   rtx insn;
-
-  if (current_function_has_far_jump)
-    return 1;
-
+  
   for (insn = get_insns (); insn; insn = NEXT_INSN (insn))
     {
       if (GET_CODE (insn) == JUMP_INSN
@@ -989,10 +985,7 @@ far_jump_used_p (void)
 	  && GET_CODE (PATTERN (insn)) != ADDR_VEC
 	  && GET_CODE (PATTERN (insn)) != ADDR_DIFF_VEC
 	  && get_attr_far_jump (insn) == FAR_JUMP_YES)
-	{
-	  current_function_has_far_jump = 1;
-	  return 1;
-	}
+	return 1;
     }
 
   return 0;
@@ -1392,7 +1385,6 @@ thumb_function_epilogue (f, frame_size)
      function will be emitted as assembly immediately after we generate
      RTL for it.  This does not happen for inline functions.  */
   return_used_this_function = 0;
-  current_function_has_far_jump = 0;
 #if 0 /* TODO : comment not really needed */
   fprintf (f, "%s THUMB Epilogue\n", ASM_COMMENT_START);
 #endif
