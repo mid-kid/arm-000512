@@ -192,10 +192,6 @@ static struct symlist *weaken_specific_list = NULL;
 
 static boolean weaken = false;
 
-/* override default section name for binary input */
-
-static char * default_section_name = 0;
-
 /* 150 isn't special; it's just an arbitrary non-ASCII char value.  */
 
 #define OPTION_ADD_SECTION 150
@@ -306,7 +302,7 @@ copy_usage (stream, exit_status)
      int exit_status;
 {
   fprintf (stream, _("\
-Usage: %s [-vVSpgxX] [-I bfdname{=section}] [-O bfdname] [-F bfdname] [-b byte]\n\
+Usage: %s [-vVSpgxX] [-I bfdname] [-O bfdname] [-F bfdname] [-b byte]\n\
        [-R section] [-i interleave] [--interleave=interleave] [--byte=byte]\n\
        [--input-target=bfdname] [--output-target=bfdname] [--target=bfdname]\n\
        [--strip-all] [--strip-debug] [--strip-unneeded] [--discard-all]\n\
@@ -1074,11 +1070,6 @@ copy_file (input_filename, output_filename, input_target, output_target)
   else if (bfd_check_format_matches (ibfd, bfd_object, &matching))
     {
       bfd *obfd;
-
-      if (default_section_name) {
-        ibfd->sections->name = default_section_name;
-        ibfd->sections->symbol->name = default_section_name;
-      }
 
       /* bfd_get_target does not return the correct value until
          bfd_check_format succeeds.  */
@@ -1860,21 +1851,7 @@ copy_main (argc, argv)
 	  break;
 	case 'I':
 	case 's':		/* "source" - 'I' is preferred */
-	  {
-	    char * s;
-	    int len;
-	    char *name;
-
-	    if (s = strchr (optarg, '=')) {
-	      len = s - optarg;
-	      name = (char *) xmalloc (len + 1);
-	      strncpy (name, optarg, len);
-	      name[len] = '\0';
-	      input_target = name;
-	      if (*(++s) != '\0') default_section_name = s;
-	    }
-	    else input_target = optarg;
-	  }
+	  input_target = optarg;
 	  break;
 	case 'O':
 	case 'd':		/* "destination" - 'O' is preferred */

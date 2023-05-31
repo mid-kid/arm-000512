@@ -441,7 +441,7 @@ static void symbol_locate	PARAMS ((symbolS *, CONST char *, segT,
 					 valueT, fragS *));
 static int add_to_lit_pool	PARAMS ((void));
 static unsigned validate_immediate	PARAMS ((unsigned));
-static int validate_offset_imm	PARAMS ((unsigned int, int));
+static int validate_offset_imm	PARAMS ((int, int));
 static void opcode_select	PARAMS ((int));
 static void end_of_line		PARAMS ((char *));
 static int reg_required_here	PARAMS ((char **, int));
@@ -1076,10 +1076,11 @@ validate_immediate (val)
 
 static int
 validate_offset_imm (val, hwse)
-     unsigned int val;
+     int val;
      int hwse;
 {
-  if ((hwse && val > 255) || val > 4095)
+  if ((hwse && (val < -255 || val > 255))
+      || (val < -4095 || val > 4095))
      return FAIL;
   return val;
 }
@@ -5247,15 +5248,13 @@ md_apply_fix3 (fixP, val, seg)
 
      case BFD_RELOC_ARM_OFFSET_IMM:
       sign = value >= 0;
-      
-      if (value < 0)
-      value = - value;
-      
       if ((value = validate_offset_imm (value, 0)) == FAIL)
         {
-          as_bad (_("bad immediate value for offset (%ld)"), (long) value);
+          as_bad (_("bad immediate value for offset (%d)"), val);
           break;
         }
+      if (value < 0)
+	value = -value;
 
       newval = md_chars_to_number (buf, INSN_SIZE);
       newval &= 0xff7ff000;
@@ -5266,19 +5265,18 @@ md_apply_fix3 (fixP, val, seg)
      case BFD_RELOC_ARM_OFFSET_IMM8:
      case BFD_RELOC_ARM_HWLITERAL:
       sign = value >= 0;
-
-      if (value < 0)
-      value = -value;
-
       if ((value = validate_offset_imm (value, 1)) == FAIL)
         {
           if (fixP->fx_r_type == BFD_RELOC_ARM_HWLITERAL)
 	    as_bad_where (fixP->fx_file, fixP->fx_line, 
 			_("invalid literal constant: pool needs to be closer\n"));
           else
-            as_bad (_("bad immediate value for half-word offset (%ld)"), (long) value);
+            as_bad (_("bad immediate value for offset (%d)"), value);
           break;
         }
+
+      if (value < 0)
+	value = -value;
 
       newval = md_chars_to_number (buf, INSN_SIZE);
       newval &= 0xff7ff0f0;
@@ -5288,9 +5286,8 @@ md_apply_fix3 (fixP, val, seg)
 
     case BFD_RELOC_ARM_LITERAL:
       sign = value >= 0;
-
       if (value < 0)
-      value = - value;
+	value = -value;
 
       if ((value = validate_offset_imm (value, 0)) == FAIL)
 	{
