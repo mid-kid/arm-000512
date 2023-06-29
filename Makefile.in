@@ -1582,6 +1582,7 @@ install-dosrel-fake:
 
 
 # This is a list of inter-dependencies among modules.
+ALL_GCC = all-gcc
 all-apache:
 all-ash:
 all-autoconf: all-m4 all-texinfo
@@ -1591,7 +1592,7 @@ all-bfd: all-libiberty all-intl
 all-binutils: all-libiberty all-opcodes all-bfd all-flex all-bison all-byacc all-intl
 all-bison: all-texinfo
 configure-target-bsp: $(ALL_GCC)
-all-target-bsp: configure-target-bsp all-gas all-ld all-gcc
+all-target-bsp: configure-target-bsp all-gas all-ld all-gcc all-target-newlib
 all-byacc:
 all-bzip2:
 all-cgen: all-libiberty
@@ -1619,7 +1620,6 @@ all-flexlm:
 all-gas: all-libiberty all-opcodes all-bfd all-intl
 all-gash: all-tcl
 all-gawk:
-ALL_GCC = all-gcc
 all-gcc: all-bison all-byacc all-binutils all-gas all-ld
 all-bootstrap: all-libiberty all-bison all-byacc all-binutils all-gas all-ld
 GDB_TK = all-tk all-tcl all-itcl all-tix all-libgui
