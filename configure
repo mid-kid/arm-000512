@@ -1064,6 +1064,22 @@ else
   export ac_cv_prog_lex_root=lex.yy
 fi
 
+# Downgrade modern gcc versions to build older code
+extra_cflags='
+  -Wno-error=implicit-function-declaration
+  -Wno-error=implicit-int
+  -Wno-error=return-mismatch
+  -std=gnu17
+'
+for flag in $extra_cflags; do
+  echo 'void f(){}' > conftest.c
+  if test -z "`${CC} ${CFLAGS} ${flag} -c conftest.c 2>&1`"; then
+    CFLAGS="${CFLAGS} ${flag}"
+    CXXFLAGS="${CXXFLAGS} ${flag}"
+  fi
+  rm -f conftest*
+done
+
 export CC
 export CXX
 export CFLAGS
